@@ -1,0 +1,33 @@
+/* ================================
+   SHADOW COLORS
+================================ */
+
+$shadow-color-primary: rgba(22, 119, 255, 0.25);
+$shadow-color-success: rgba(82, 196, 26, 0.25);
+$shadow-color-warning: rgba(250, 173, 20, 0.25);
+$shadow-color-danger: rgba(245, 34, 45, 0.25);
+$shadow-color-neutral: rgba(0, 0, 0, 0.15);
+
+/* ================================
+   SHADOW LEVELS
+================================ */
+
+$shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.08);
+$shadow-md: 0 4px 16px rgba(0, 0, 0, 0.12);
+$shadow-lg: 0 8px 30px rgba(0, 0, 0, 0.16);
+
+/* ================================
+   HOVER / ACTIVE SHADOWS
+================================ */
+
+$shadow-hover-primary: 0 6px 20px $shadow-color-primary;
+$shadow-hover-success: 0 6px 20px $shadow-color-success;
+$shadow-hover-warning: 0 6px 20px $shadow-color-warning;
+$shadow-hover-danger: 0 6px 20px $shadow-color-danger;
+$shadow-hover-neutral: 0 6px 20px $shadow-color-neutral;
+
+$shadow-active-primary: 0 2px 10px $shadow-color-primary;
+$shadow-active-success: 0 2px 10px $shadow-color-success;
+$shadow-active-warning: 0 2px 10px $shadow-color-warning;
+$shadow-active-danger: 0 2px 10px $shadow-color-danger;
+$shadow-active-neutral: 0 2px 10px $shadow-color-neutral;

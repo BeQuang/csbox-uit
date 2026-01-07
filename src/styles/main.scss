@@ -1,0 +1,6 @@
+@use "./abstracts/variables" as v;
+@use "./base/global";
+
+body {
+  background: v.$gray-100;
+}

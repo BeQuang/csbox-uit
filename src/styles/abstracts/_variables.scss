@@ -1,0 +1,11 @@
+@forward "colors";
+@forward "shadows";
+
+/* Border radius */
+$radius-sm: 6px;
+$radius-md: 10px;
+$radius-lg: 14px;
+
+/* Transition */
+$transition-fast: all 0.2s ease;
+$transition-base: all 0.3s ease;
