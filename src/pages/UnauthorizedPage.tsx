@@ -1,0 +1,3 @@
+export default function UnauthorizedPage() {
+  return <h2>403 - Unauthorized</h2>;
+}
