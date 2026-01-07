@@ -4,7 +4,7 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { useSelector } from "react-redux";
 
 import { useAuthStore } from "@/app/store/auth.store";
-import { MENU_CONFIG } from "@/app/router/menu.config";
+import { getMenuConfigByRole } from "@/app/router/menu.config";
 import { RootState } from "@/app/redux/store";
 
 import "./AppLayout.scss";
@@ -15,20 +15,19 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
   const navigate = useNavigate();
   const location = useLocation();
 
-  const isAuthenticated = useSelector(
-    (state: RootState) => state.auth.isAuthenticated
+  const { user, isAuthenticated } = useSelector(
+    (state: RootState) => state.auth
   );
 
-  const user = useAuthStore((s) => s.user);
   const logout = useAuthStore((s) => s.logout);
 
-  const menuItems = MENU_CONFIG.filter(
-    (item) => user && item.allowedRoles.includes(user.role)
-  ).map((item) => ({
-    key: item.key,
-    label: item.label,
-    onClick: () => navigate(item.path),
-  }));
+  const menuItems = user
+    ? getMenuConfigByRole(user.role).map((item) => ({
+        key: item.key,
+        label: item.label,
+        onClick: () => navigate(item.path),
+      }))
+    : [];
 
   const handleLogout = () => {
     logout();
@@ -45,6 +44,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
           items={menuItems}
           className="app-layout__menu"
         />
+        <Button onClick={() => console.log(user)}>Click nè</Button>
 
         {isAuthenticated && (
           <div className="app-layout__logout">

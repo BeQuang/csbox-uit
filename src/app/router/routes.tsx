@@ -1,3 +1,4 @@
+// src/app/router/routes.tsx
 import type { Role } from "@/utils/role";
 import { ROLES } from "@/utils/role";
 
@@ -13,18 +14,15 @@ export interface AppRoute {
   element: React.ReactNode;
   isProtected?: boolean;
   allowedRoles?: Role[];
+
+  // 👇 thêm cho menu
+  menuLabel?: string;
 }
 
-/**
- * 👉 Add new protected route:
- * - Add object
- * - Define allowedRoles
- */
 export const routes: AppRoute[] = [
   {
     path: "/",
     element: <LandingPage />,
-    isProtected: false,
   },
   {
     path: "/login",
@@ -39,17 +37,20 @@ export const routes: AppRoute[] = [
     element: <DashboardPage />,
     isProtected: true,
     allowedRoles: [ROLES.ADMIN, ROLES.STAFF],
+    menuLabel: "Dashboard",
   },
   {
     path: "/users",
     element: <UsersPage />,
     isProtected: true,
     allowedRoles: [ROLES.ADMIN],
+    menuLabel: "Users",
   },
   {
     path: "/profile",
     element: <ProfilePage />,
     isProtected: true,
     allowedRoles: [ROLES.ADMIN, ROLES.STAFF, ROLES.USER],
+    menuLabel: "Profile",
   },
 ];

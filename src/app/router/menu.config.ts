@@ -1,4 +1,6 @@
-import { Role, ROLES } from "@/utils/role";
+// src/app/router/menu.config.ts
+import { routes } from "./routes";
+import type { Role } from "@/utils/role";
 
 export interface AppMenuItem {
   key: string;
@@ -7,23 +9,14 @@ export interface AppMenuItem {
   allowedRoles: Role[];
 }
 
-export const MENU_CONFIG: AppMenuItem[] = [
-  {
-    key: "dashboard",
-    label: "Dashboard",
-    path: "/dashboard",
-    allowedRoles: [ROLES.ADMIN, ROLES.STAFF],
-  },
-  {
-    key: "users",
-    label: "Users",
-    path: "/users",
-    allowedRoles: [ROLES.ADMIN],
-  },
-  {
-    key: "profile",
-    label: "Profile",
-    path: "/profile",
-    allowedRoles: [ROLES.ADMIN, ROLES.STAFF, ROLES.USER],
-  },
-];
+export const getMenuConfigByRole = (role: Role): AppMenuItem[] =>
+  routes
+    .filter(
+      (r) => r.menuLabel && r.allowedRoles && r.allowedRoles.includes(role)
+    )
+    .map((r) => ({
+      key: r.path.replace("/", ""),
+      label: r.menuLabel!,
+      path: r.path,
+      allowedRoles: r.allowedRoles!,
+    }));

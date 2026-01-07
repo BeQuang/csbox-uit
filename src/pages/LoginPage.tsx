@@ -2,23 +2,29 @@ import { Button, Card, Form, Input, Typography, message } from "antd";
 import { useNavigate } from "react-router-dom";
 import { useAuthStore } from "@/app/store/auth.store";
 import { redirectByRole } from "@/utils/redirectByRole";
+import { useSelector } from "react-redux";
+import { RootState } from "@/app/redux/store";
 
 const { Title } = Typography;
 
 export default function LoginPage() {
   const login = useAuthStore((s) => s.login);
-  const user = useAuthStore((s) => s.user);
+  const user = useSelector((state: RootState) => state.auth.user);
   const navigate = useNavigate();
 
   const onFinish = (values: { username: string; password: string }) => {
     const success = login(values.username, values.password);
 
-    if (!success || !user) {
+    if (!success) {
       message.error("Sai tài khoản hoặc mật khẩu");
       return;
     }
 
-    navigate(redirectByRole(user.role), { replace: true });
+    // Redux đã có user
+    const role = user?.role;
+    if (!role) return;
+
+    navigate(redirectByRole(role), { replace: true });
   };
 
   return (
