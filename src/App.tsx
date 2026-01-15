@@ -1,13 +1,13 @@
 import { BrowserRouter } from "react-router-dom";
 import { AppRouter } from "./app/router/AppRouter";
-import AppLayout from "./components/AppLayout/AppLayout";
+import LayoutSwitch from "./app/layouts/LayoutSwitch";
 
 function App() {
   return (
     <BrowserRouter>
-      <AppLayout>
+      <LayoutSwitch>
         <AppRouter />
-      </AppLayout>
+      </LayoutSwitch>
     </BrowserRouter>
   );
 }

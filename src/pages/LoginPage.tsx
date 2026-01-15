@@ -4,12 +4,15 @@ import { useAuthStore } from "@/app/store/auth.store";
 import { redirectByRole } from "@/utils/redirectByRole";
 import { useSelector } from "react-redux";
 import { RootState } from "@/app/redux/store";
+import { useEffect } from "react";
 
 const { Title } = Typography;
 
 export default function LoginPage() {
   const login = useAuthStore((s) => s.login);
-  const user = useSelector((state: RootState) => state.auth.user);
+  const { user, isAuthenticated } = useSelector(
+    (state: RootState) => state.auth
+  );
   const navigate = useNavigate();
 
   const onFinish = (values: { username: string; password: string }) => {
@@ -17,15 +20,15 @@ export default function LoginPage() {
 
     if (!success) {
       message.error("Sai tài khoản hoặc mật khẩu");
-      return;
     }
-
-    // Redux đã có user
-    const role = user?.role;
-    if (!role) return;
-
-    navigate(redirectByRole(role), { replace: true });
   };
+
+  // 👇 theo dõi redux auth
+  useEffect(() => {
+    if (isAuthenticated && user?.role) {
+      navigate(redirectByRole(user.role), { replace: true });
+    }
+  }, [isAuthenticated, user, navigate]);
 
   return (
     <Card style={{ width: 360, margin: "100px auto" }}>

@@ -1,0 +1,91 @@
+@use "@/styles/abstracts/variables" as v;
+
+/* ========== ADMIN SIDEBAR ========== */
+.app-layout {
+  min-height: 100vh;
+
+  &__sider {
+    display: flex;
+    flex-direction: column;
+  }
+
+  &__menu {
+    flex: 1;
+    border-right: none;
+  }
+
+  &__logout {
+    padding: 16px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+
+    button {
+      font-weight: 500;
+    }
+  }
+
+  &__content {
+    padding: 24px;
+    background: v.$gray-200;
+  }
+}
+
+/* ========== USER NAVBAR ========== */
+.user-navbar {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  height: 64px;
+  padding: 0 24px;
+  display: flex;
+  align-items: center;
+  background: #001529;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+
+  &__logo {
+    color: #fff;
+    font-size: 18px;
+    font-weight: 700;
+    margin-right: 32px;
+    white-space: nowrap;
+  }
+
+  &__menu {
+    flex: 1;
+    min-width: 0;
+
+    .ant-menu {
+      background: transparent;
+      border-bottom: none;
+    }
+
+    .ant-menu-item {
+      padding: 0 16px;
+      font-weight: 500;
+    }
+  }
+
+  &__logout {
+    margin-left: 16px;
+
+    button {
+      color: #ff4d4f;
+
+      &:hover {
+        color: #ff7875;
+        background: rgba(255, 77, 79, 0.1);
+      }
+    }
+  }
+}
+
+/* ========== USER LAYOUT CONTENT ========== */
+
+.user-layout {
+  min-height: 100vh;
+
+  &__content {
+    padding: 24px;
+    background: v.$gray-200;
+    min-height: calc(100vh - 64px); // trừ navbar
+  }
+}
