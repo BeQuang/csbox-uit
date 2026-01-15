@@ -38,11 +38,12 @@
   padding: 0 24px;
   display: flex;
   align-items: center;
-  background: #001529;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+
+  background: v.$gray-1000;
+  box-shadow: v.$shadow-md;
 
   &__logo {
-    color: #fff;
+    color: v.$gray-100;
     font-size: 18px;
     font-weight: 700;
     margin-right: 32px;
@@ -61,6 +62,7 @@
     .ant-menu-item {
       padding: 0 16px;
       font-weight: 500;
+      color: v.$gray-100;
     }
   }
 
@@ -68,11 +70,11 @@
     margin-left: 16px;
 
     button {
-      color: #ff4d4f;
+      color: v.$danger-500;
 
       &:hover {
-        color: #ff7875;
-        background: rgba(255, 77, 79, 0.1);
+        color: v.$danger-400;
+        background: v.$danger-100;
       }
     }
   }
@@ -86,6 +88,6 @@
   &__content {
     padding: 24px;
     background: v.$gray-200;
-    min-height: calc(100vh - 64px); // trừ navbar
+    min-height: calc(100vh - 64px);
   }
 }

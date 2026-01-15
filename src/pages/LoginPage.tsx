@@ -1,10 +1,11 @@
-import { Button, Card, Form, Input, Typography, message } from "antd";
+import { Card, Form, Input, Typography, message } from "antd";
 import { useNavigate } from "react-router-dom";
 import { useAuthStore } from "@/app/store/auth.store";
 import { redirectByRole } from "@/utils/redirectByRole";
 import { useSelector } from "react-redux";
 import { RootState } from "@/app/redux/store";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import CSButton from "@/components/core/CSButton";
 
 const { Title } = Typography;
 
@@ -15,15 +16,23 @@ export default function LoginPage() {
   );
   const navigate = useNavigate();
 
-  const onFinish = (values: { username: string; password: string }) => {
-    const success = login(values.username, values.password);
+  const [loading, setLoading] = useState(false);
 
-    if (!success) {
-      message.error("Sai tài khoản hoặc mật khẩu");
-    }
+  const onFinish = (values: { username: string; password: string }) => {
+    setLoading(true);
+
+    // ⏳ fake delay để giả lập gọi API
+    setTimeout(() => {
+      const success = login(values.username, values.password);
+
+      if (!success) {
+        message.error("Sai tài khoản hoặc mật khẩu");
+        setLoading(false);
+      }
+    }, 1200);
   };
 
-  // 👇 theo dõi redux auth
+  // 👇 Khi redux auth đổi -> redirect
   useEffect(() => {
     if (isAuthenticated && user?.role) {
       navigate(redirectByRole(user.role), { replace: true });
@@ -43,9 +52,14 @@ export default function LoginPage() {
           <Input.Password placeholder="admin123 / staff123 / user123" />
         </Form.Item>
 
-        <Button type="primary" htmlType="submit" block>
+        <CSButton
+          type="submit"
+          size="lg"
+          style={{ width: "100%" }}
+          loading={loading}
+        >
           Đăng nhập
-        </Button>
+        </CSButton>
       </Form>
     </Card>
   );
