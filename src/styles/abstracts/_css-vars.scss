@@ -1,0 +1,46 @@
+@use "./variables" as v;
+
+:root {
+  /* =========================
+     COLORS
+  ========================= */
+
+  --color-primary: #{v.$primary-600};
+  --color-primary-hover: #{v.$primary-700};
+  --color-primary-active: #{v.$primary-800};
+
+  --color-success: #{v.$success-600};
+  --color-warning: #{v.$warning-600};
+  --color-danger: #{v.$danger-600};
+
+  --color-text: #{v.$gray-900};
+  --color-text-muted: #{v.$gray-600};
+  --color-border: #{v.$gray-400};
+  --color-bg: #{v.$gray-100};
+
+  /* =========================
+     RADIUS
+  ========================= */
+
+  --radius-sm: #{v.$radius-sm};
+  --radius-md: #{v.$radius-md};
+  --radius-lg: #{v.$radius-lg};
+
+  /* =========================
+     SHADOW
+  ========================= */
+
+  --shadow-sm: #{v.$shadow-sm};
+  --shadow-md: #{v.$shadow-md};
+  --shadow-lg: #{v.$shadow-lg};
+
+  --shadow-hover-primary: #{v.$shadow-hover-primary};
+  --shadow-active-primary: #{v.$shadow-active-primary};
+
+  /* =========================
+     TRANSITION
+  ========================= */
+
+  --transition-fast: #{v.$transition-fast};
+  --transition-base: #{v.$transition-base};
+}

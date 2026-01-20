@@ -5,14 +5,14 @@ import { redirectByRole } from "@/utils/redirectByRole";
 import { useSelector } from "react-redux";
 import { RootState } from "@/app/redux/store";
 import { useEffect, useState } from "react";
-import CSButton from "@/components/core/CSButton";
+import CSButton from "@/components/core/CSButton/CSButton";
 
 const { Title } = Typography;
 
 export default function LoginPage() {
   const login = useAuthStore((s) => s.login);
   const { user, isAuthenticated } = useSelector(
-    (state: RootState) => state.auth
+    (state: RootState) => state.auth,
   );
   const navigate = useNavigate();
 

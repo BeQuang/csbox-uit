@@ -1,6 +1,8 @@
-@use "./abstracts/variables" as v;
+@use "./abstracts/variables";
+@use "./abstracts/css-vars"; // 🔥 thêm dòng này
 @use "./base/global";
 
 body {
-  background: v.$gray-100;
+  background: var(--color-bg);
+  color: var(--color-text);
 }

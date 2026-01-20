@@ -1,0 +1,104 @@
+.cs-input {
+  /* ===== DEFAULT VARIABLES ===== */
+  --input-border: var(--color-border);
+  --input-focus: var(--color-primary);
+  --input-ring: var(--color-primary-ring);
+  --input-text: var(--color-text-primary);
+  --input-bg: var(--color-surface);
+
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  max-width: 320px;
+
+  &__label {
+    font-weight: 500;
+    color: var(--input-text);
+
+    span {
+      color: var(--color-danger);
+      margin-left: 4px;
+    }
+  }
+
+  &__wrapper {
+    display: flex;
+    align-items: center;
+    padding: 0 10px;
+
+    border: 1px solid var(--input-border);
+    border-radius: var(--radius-md);
+    background: var(--input-bg);
+    transition: var(--transition-fast);
+
+    &:focus-within {
+      border-color: var(--input-focus);
+      box-shadow: 0 0 0 2px var(--input-ring);
+    }
+  }
+
+  input {
+    flex: 1;
+    border: none;
+    outline: none;
+    padding: 8px 6px;
+    font-size: 14px;
+    background: transparent;
+    color: var(--input-text);
+  }
+
+  &__icon {
+    margin-right: 6px;
+    color: var(--color-text-secondary);
+  }
+
+  &__unit {
+    margin-left: 8px;
+    font-weight: 500;
+    color: var(--color-text-secondary);
+
+    select {
+      border: none;
+      outline: none;
+      background: transparent;
+      cursor: pointer;
+      color: inherit;
+    }
+  }
+
+  &__error {
+    font-size: 12px;
+    color: var(--color-danger);
+  }
+
+  /* ===== STATES ===== */
+  &--disabled {
+    opacity: 0.6;
+    pointer-events: none;
+  }
+
+  &--error {
+    --input-border: var(--color-danger);
+    --input-focus: var(--color-danger);
+    --input-ring: var(--color-danger-ring);
+  }
+
+  /* ===== VARIANTS ===== */
+  &--success {
+    --input-border: var(--color-success);
+    --input-focus: var(--color-success);
+    --input-ring: var(--color-success-ring);
+  }
+
+  &--warning {
+    --input-border: var(--color-warning);
+    --input-focus: var(--color-warning);
+    --input-ring: var(--color-warning-ring);
+  }
+
+  &--danger {
+    --input-border: var(--color-danger);
+    --input-focus: var(--color-danger);
+    --input-ring: var(--color-danger-ring);
+  }
+}

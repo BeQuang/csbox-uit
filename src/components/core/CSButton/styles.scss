@@ -1,0 +1,79 @@
+.cs-btn {
+  border: none;
+  cursor: pointer;
+  border-radius: var(--radius-md);
+  color: #fff;
+  background: var(--btn-bg, var(--color-primary));
+  transition: var(--transition-fast);
+  box-shadow: var(--shadow-sm);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+
+  &:hover:not(:disabled) {
+    background: var(--btn-bg-hover);
+    box-shadow: var(--shadow-hover-primary);
+  }
+
+  &:active:not(:disabled) {
+    box-shadow: var(--shadow-active-primary);
+  }
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    box-shadow: none;
+  }
+
+  /* ===== SIZE ===== */
+  &--sm {
+    padding: 6px 14px;
+    font-size: 12px;
+  }
+
+  &--md {
+    padding: 10px 20px;
+    font-size: 14px;
+  }
+
+  &--lg {
+    padding: 14px 28px;
+    font-size: 16px;
+  }
+
+  /* ===== COLOR VARIANTS ===== */
+  &--primary {
+    --btn-bg: var(--color-primary);
+    --btn-bg-hover: var(--color-primary-hover);
+  }
+
+  &--success {
+    --btn-bg: var(--color-success);
+    --btn-bg-hover: var(--color-success-hover);
+  }
+
+  &--warning {
+    --btn-bg: var(--color-warning);
+    --btn-bg-hover: var(--color-warning-hover);
+  }
+
+  &--danger {
+    --btn-bg: var(--color-danger);
+    --btn-bg-hover: var(--color-danger-hover);
+  }
+
+  &--info {
+    --btn-bg: var(--color-info);
+    --btn-bg-hover: var(--color-info-hover);
+  }
+
+  /* ===== LOADING ===== */
+  &__loader {
+    display: inline-flex;
+  }
+
+  &__content--hidden {
+    opacity: 0;
+  }
+}
