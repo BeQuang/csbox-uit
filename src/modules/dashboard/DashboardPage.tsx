@@ -67,7 +67,7 @@ export default function DashboardPage() {
         overflowX: "auto",
       }}
     >
-      {/* CỘT 1: TEST CSSELECT (Giữ nguyên của bạn) */}
+      {/* CỘT 1: TEST TOÀN BỘ TRƯỜNG HỢP CSSELECT */}
       <div
         style={{
           flex: 1,
@@ -77,32 +77,93 @@ export default function DashboardPage() {
           minWidth: "320px",
         }}
       >
-        <h2 style={{ fontSize: "18px", fontWeight: 700 }}>🧪 Test CSSelect</h2>
+        <h2 style={{ fontSize: "18px", fontWeight: 700 }}>
+          🧪 Test CSSelect Cases
+        </h2>
+
+        {/* 1. Chọn đơn cơ bản + Variant Success */}
         <CSSelect
-          label="Single Select + Success Variant"
+          label="1. Chọn đơn + Success Variant"
+          placeholder="Chọn trạng thái..."
+          options={statusOptions}
+          value={singleValue}
+          onChange={(val) => setSingleValue(val as string)}
+          variant="success"
+        />
+
+        {/* 2. Chọn đơn + Tìm kiếm (Searchable) */}
+        <CSSelect
+          label="2. Chọn đơn + Searchable"
+          placeholder="Tìm kiếm trạng thái..."
           options={statusOptions}
           value={singleValue}
           onChange={(val) => setSingleValue(val as string)}
           isSearchable
-          variant="success"
         />
+
+        {/* 3. Chọn nhiều + Xóa nhanh (Clear All) */}
         <CSSelect
-          label="Multiple Select + Select All"
+          label="3. Chọn nhiều + Clear All"
+          placeholder="Chọn nhiều mục..."
+          options={statusOptions}
+          value={multiValue}
+          onChange={(val) => setMultiValue(val as string[])}
+          multiple
+          showClearAll
+        />
+
+        {/* 4. Chọn nhiều + Chọn tất cả + Giới hạn hiển thị Tag */}
+        <CSSelect
+          label="4. Multi + Select All + Max Tags (2)"
+          placeholder="Chọn nhiều..."
           options={statusOptions}
           value={multiValue}
           onChange={(val) => setMultiValue(val as string[])}
           multiple
           showSelectAll
-          showClearAll
           maxTagDisplay={2}
         />
+
+        {/* 5. Phân nhóm (Grouping) + Searchable */}
         <CSSelect
-          label="Phân loại hệ thống (Grouping)"
-          placeholder="Chọn mục trong nhóm..."
+          label="5. Phân nhóm + Searchable"
+          placeholder="Chọn mục từ nhóm..."
           options={groupedOptions}
           value={groupValue}
           onChange={(val) => setGroupValue(val as string)}
           isSearchable
+        />
+
+        {/* 6. Trạng thái Lỗi (Error State) */}
+        <CSSelect
+          label="6. Trạng thái lỗi (Danger)"
+          placeholder="Vui lòng chọn..."
+          options={statusOptions}
+          value=""
+          onChange={() => {}}
+          variant="danger"
+          error="Trường này là bắt buộc"
+        />
+
+        {/* 7. Trạng thái Vô hiệu hóa (Disabled) */}
+        <CSSelect
+          label="7. Vô hiệu hóa (Disabled)"
+          placeholder="Không thể chọn..."
+          options={statusOptions}
+          value="active"
+          onChange={() => {}}
+          disabled
+        />
+
+        {/* 8. Variant Info + Không có kết quả tìm kiếm */}
+        <CSSelect
+          label="8. Variant Info"
+          placeholder="Thử tìm kiếm thứ gì đó không tồn tại..."
+          options={statusOptions}
+          value=""
+          onChange={() => {}}
+          isSearchable
+          variant="info"
         />
       </div>
 
