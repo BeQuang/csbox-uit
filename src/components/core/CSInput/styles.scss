@@ -1,20 +1,20 @@
 .cs-input {
-  /* ===== DEFAULT VARIABLES ===== */
+  // Biến hệ thống
   --input-border: var(--color-border);
   --input-focus: var(--color-primary);
   --input-ring: var(--color-primary-ring);
-  --input-text: var(--color-text-primary);
   --input-bg: var(--color-surface);
+  --input-text: var(--color-text-primary);
 
   display: flex;
   flex-direction: column;
   gap: 6px;
-  max-width: 320px;
+  width: 100%;
 
   &__label {
     font-weight: 500;
+    font-size: 14px;
     color: var(--input-text);
-
     span {
       color: var(--color-danger);
       margin-left: 4px;
@@ -24,12 +24,13 @@
   &__wrapper {
     display: flex;
     align-items: center;
-    padding: 0 10px;
-
+    padding: 0 12px;
+    min-height: 40px;
+    background: var(--input-bg);
     border: 1px solid var(--input-border);
     border-radius: var(--radius-md);
-    background: var(--input-bg);
-    transition: var(--transition-fast);
+    transition: all 0.2s;
+    cursor: text;
 
     &:focus-within {
       border-color: var(--input-focus);
@@ -41,20 +42,59 @@
     flex: 1;
     border: none;
     outline: none;
-    padding: 8px 6px;
-    font-size: 14px;
     background: transparent;
+    padding: 8px 0;
+    font-size: 14px;
     color: var(--input-text);
+    min-width: 0; // Tránh tràn layout
   }
 
   &__icon {
-    margin-right: 6px;
-    color: var(--color-text-secondary);
+    margin-right: 10px;
+    color: var(--color-text-muted);
+    display: flex;
+    align-items: center;
   }
 
-  &__unit {
+  /* Nhóm icon hành động */
+  &__actions {
+    display: flex;
+    align-items: center;
+    gap: 4px;
     margin-left: 8px;
-    font-weight: 500;
+  }
+
+  &__action-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    border-radius: 4px;
+    color: var(--color-text-muted);
+    cursor: pointer;
+    transition: all 0.2s;
+
+    &:hover {
+      background-color: var(--color-bg-subtle);
+      color: var(--input-focus);
+    }
+  }
+
+  &__clear-btn:hover {
+    color: var(--color-danger) !important;
+  }
+
+  /* Đơn vị */
+  &__unit-box {
+    margin-left: 10px;
+    padding-left: 10px;
+    border-left: 1px solid var(--color-border);
+    height: 20px;
+    display: flex;
+    align-items: center;
+    font-size: 13px;
+    font-weight: 600;
     color: var(--color-text-secondary);
 
     select {
@@ -63,42 +103,41 @@
       background: transparent;
       cursor: pointer;
       color: inherit;
+      font-weight: inherit;
     }
   }
 
-  &__error {
+  &__error-text {
     font-size: 12px;
     color: var(--color-danger);
   }
 
-  /* ===== STATES ===== */
+  // Trạng thái disabled
   &--disabled {
     opacity: 0.6;
     pointer-events: none;
+    .cs-input__wrapper {
+      background: var(--color-bg-subtle);
+    }
+  }
+
+  // Variants (Mixin-like)
+  @mixin apply-variant($color, $ring) {
+    --input-border: #{$color};
+    --input-focus: #{$color};
+    --input-ring: #{$ring};
   }
 
   &--error {
-    --input-border: var(--color-danger);
-    --input-focus: var(--color-danger);
-    --input-ring: var(--color-danger-ring);
+    @include apply-variant(var(--color-danger), var(--color-danger-ring));
   }
-
-  /* ===== VARIANTS ===== */
   &--success {
-    --input-border: var(--color-success);
-    --input-focus: var(--color-success);
-    --input-ring: var(--color-success-ring);
+    @include apply-variant(var(--color-success), var(--color-success-ring));
   }
-
   &--warning {
-    --input-border: var(--color-warning);
-    --input-focus: var(--color-warning);
-    --input-ring: var(--color-warning-ring);
+    @include apply-variant(var(--color-warning), var(--color-warning-ring));
   }
-
-  &--danger {
-    --input-border: var(--color-danger);
-    --input-focus: var(--color-danger);
-    --input-ring: var(--color-danger-ring);
+  &--info {
+    @include apply-variant(var(--color-info), var(--color-info-ring));
   }
 }

@@ -1,58 +1,99 @@
 # 📦 CSSelect Component
 
-**CSSelect** là một React Component tùy chỉnh mạnh mẽ, được xây dựng trên nền tảng **Radix UI Popover** và **Lucide React**. Component này hỗ trợ cả chế độ **chọn đơn (Single)** và **chọn nhiều (Multiple)** với giao diện hiện đại, dễ dàng tùy chỉnh theo **Design System** của dự án.
+CSSelect là một **React controlled component** dùng để chọn dữ liệu dạng **dropdown**, được xây dựng trên **Radix UI Popover** và đồng bộ theo **Design System nội bộ**. Component này được thiết kế để dùng chung cho nhiều ngữ cảnh khác nhau nhưng vẫn giữ API nhất quán và dễ mở rộng.
+
+> 🎯 Mục tiêu: chỉ cần học **1 component**, có thể dùng cho **Single Select**, **Multiple Select** và **Grouped Select**.
 
 ---
 
-## ✨ Tính năng chính
+## 🧠 Cách CSSelect hoạt động
 
-- ✅ **Single & Multiple**: Hỗ trợ chọn một giá trị hoặc nhiều giá trị linh hoạt.
-- ✅ **Searchable**: Tích hợp ô tìm kiếm để lọc dữ liệu nhanh chóng trong danh sách.
-- ✅ **Grouping**: Hiển thị dữ liệu theo nhóm (Category) giúp phân loại thông tin rõ ràng.
-- ✅ **Variants**: Hỗ trợ 5 trạng thái màu sắc: `default`, `success`, `warning`, `danger`, `info`.
-- ✅ **Select All**: Tùy chọn chọn tất cả các item nhanh chóng cho chế độ Multiple.
-- ✅ **Loading State**: Hiển thị thông báo khi dữ liệu đang được tải về.
-- ✅ **Clearable**: Xóa nhanh các lựa chọn bằng icon **Trash2**.
+CSSelect là **controlled component 100%**:
+
+- ❗ Không tự lưu state giá trị được chọn
+- Giá trị luôn đi **từ ngoài vào (`value`)**
+- Mọi thay đổi đều đi **ra ngoài (`onChange`)**
+
+```txt
+User click → CSSelect xử lý UI → onChange(value) → Parent update state → CSSelect render lại
+```
+
+Điều này giúp:
+
+- Đồng bộ dễ với Form, React Hook Form, Redux, Zustand...
+- Không bị lệ thuộc logic bên trong component
 
 ---
 
-## 🚀 Hướng dẫn cài đặt
-
-Trước khi sử dụng, hãy đảm bảo bạn đã cài đặt các thư viện cần thiết:
+## 🚀 Cài đặt
 
 ```bash
-npm install @radix-ui/react-popover lucide-react
+npm install @radix-ui/react-popover @radix-ui/react-tooltip lucide-react
+```
+
+```ts
+import CSSelect from "@/components/core/CSSelect";
 ```
 
 ---
 
-## 🛠️ API Reference (Props)
+## 🧩 Các kiểu dữ liệu hỗ trợ
 
-| Prop            | Kiểu dữ liệu          | Mặc định    | Mô tả                                           |
-| --------------- | --------------------- | ----------- | ----------------------------------------------- |
-| `label`         | `string`              | -           | Nhãn hiển thị phía trên Select                  |
-| `required`      | `boolean`             | `false`     | Hiển thị dấu `*` đỏ bên cạnh nhãn               |
-| `options`       | `Option[] \| Group[]` | -           | Mảng dữ liệu đầu vào (phẳng hoặc theo nhóm)     |
-| `value`         | `string \| string[]`  | -           | Giá trị hiện tại đang được chọn                 |
-| `onChange`      | `(val) => void`       | -           | Callback trả về giá trị mới khi thay đổi        |
-| `multiple`      | `boolean`             | `false`     | Bật chế độ cho phép chọn nhiều giá trị          |
-| `isSearchable`  | `boolean`             | `false`     | Hiển thị ô tìm kiếm trong dropdown              |
-| `showSelectAll` | `boolean`             | `false`     | Hiển thị tùy chọn chọn tất cả (Multiple)        |
-| `variant`       | `CSSelectVariant`     | `"default"` | Màu sắc hiển thị (`success`, `danger`, ...)     |
-| `maxTagDisplay` | `number`              | `3`         | Số tag tối đa hiển thị trước khi gộp thành `+n` |
-| `isLoading`     | `boolean`             | `false`     | Hiển thị trạng thái đang tải dữ liệu            |
-| `error`         | `string`              | -           | Thông báo lỗi hiển thị phía dưới component      |
+### Option (dữ liệu phẳng)
+
+```ts
+export interface CSSelectOption {
+  label: string;
+  value: string;
+}
+```
+
+### Group (dữ liệu phân nhóm)
+
+```ts
+export interface CSSelectGroup {
+  group: string;
+  items: CSSelectOption[];
+}
+```
 
 ---
 
-## 📖 Ví dụ sử dụng
+## ✨ Tính năng nổi bật
 
-### 1. Chọn đơn cơ bản (Single Select)
+Ngoài các chức năng select cơ bản, CSSelect còn được thiết kế để xử lý tốt các **case UI phức tạp trong dashboard/admin**:
+
+- ✅ Single / Multiple / Grouping Select
+- 🔍 Search dữ liệu (flat & grouped)
+- 🏷️ Hiển thị tag khi multiple select
+- ➕ Giới hạn số tag hiển thị (`maxTagDisplay`)
+- 💬 **Tooltip hiển thị đầy đủ các tag bị ẩn** (khi vượt `maxTagDisplay`)
+- ☑️ Select All / Clear All
+- ⏳ Loading state
+- 🎨 Variant theo Design System
+
+---
+
+## 📖 3 cách sử dụng chính
+
+CSSelect chỉ có **1 component duy nhất**, nhưng được sử dụng theo **3 kiểu phổ biến** dưới đây.
+
+---
+
+### 1️⃣ Single Select (dữ liệu phẳng)
+
+👉 Dùng khi **chỉ chọn 1 giá trị duy nhất** (status, type, enum...).
+
+**Đặc điểm hoạt động**:
+
+- `multiple = false` (mặc định)
+- `value` là `string`
+- Chọn xong → dropdown tự đóng
 
 ```tsx
-import CSSelect from "./components/core/CSSelect";
+const [value, setValue] = useState("active");
 
-const statusOptions = [
+const options = [
   { label: "Hoạt động", value: "active" },
   { label: "Tạm dừng", value: "paused" },
   { label: "Đã xóa", value: "deleted" },
@@ -60,61 +101,157 @@ const statusOptions = [
 
 <CSSelect
   label="Trạng thái"
-  options={statusOptions}
-  value={val}
-  onChange={(v) => setVal(v as string)}
+  placeholder="Chọn trạng thái"
+  options={options}
+  value={value}
+  onChange={(v) => setValue(v as string)}
+  isSearchable
+  showClearAll
 />;
 ```
 
 ---
 
-### 2. Chọn nhiều với Tìm kiếm & Phân nhóm
+### 2️⃣ Multiple Select (dữ liệu phẳng)
+
+👉 Dùng khi **chọn nhiều giá trị cùng lúc** (tags, roles, permissions...).
+
+**Đặc điểm hoạt động**:
+
+- `multiple = true`
+- `value` là `string[]`
+- Hiển thị tag đã chọn
+- Có thể chọn / bỏ từng tag
 
 ```tsx
+const [values, setValues] = useState<string[]>(["active", "paused"]);
+
 <CSSelect
-  label="Dự án Multiple"
+  label="Tags dự án"
+  placeholder="Chọn nhiều tag"
+  options={options}
+  value={values}
+  onChange={(v) => setValues(v as string[])}
   multiple
   isSearchable
+  maxTagDisplay={3}
   showSelectAll
-  variant="success"
-  options={[
-    {
-      group: "Phòng kỹ thuật",
-      items: [
-        { label: "Nguyễn Văn A", value: "a" },
-        { label: "Trần Thị B", value: "b" },
-      ],
-    },
-    {
-      group: "Phòng nhân sự",
-      items: [{ label: "Lê Văn C", value: "c" }],
-    },
-  ]}
-  value={["a", "b"]}
-  onChange={(v) => console.log(v)}
-/>
+  showClearAll
+/>;
+```
+
+📌 Khi số tag vượt `maxTagDisplay`, component sẽ hiển thị `+n` để giữ layout gọn gàng.
+
+💬 **Tooltip thông minh**:
+
+- Hover vào `+n` sẽ hiển thị tooltip
+- Tooltip liệt kê **toàn bộ label của các option đang bị ẩn**
+- Giúp người dùng xem đầy đủ dữ liệu mà **không cần mở dropdown lại**
+
+---
+
+### 3️⃣ Grouping Select (dữ liệu phân nhóm)
+
+👉 Dùng khi dữ liệu **nhiều và cần phân loại rõ ràng**.
+
+**Đặc điểm hoạt động**:
+
+- `options` là `CSSelectGroup[]`
+- Search hoạt động **xuyên nhóm**
+- Có thể dùng cho Single hoặc Multiple
+
+```tsx
+const [value, setValue] = useState("");
+
+const groupedOptions = [
+  {
+    group: "Trạng thái hệ thống",
+    items: [
+      { label: "Bản nháp", value: "draft" },
+      { label: "Đang bảo trì", value: "maintenance" },
+    ],
+  },
+  {
+    group: "Tiến trình Game",
+    items: [
+      { label: "Đang thi đấu", value: "playing" },
+      { label: "Hoàn thành", value: "completed" },
+    ],
+  },
+];
+
+<CSSelect
+  label="Phân loại hệ thống"
+  options={groupedOptions}
+  value={value}
+  onChange={(v) => setValue(v as string)}
+  isSearchable
+/>;
 ```
 
 ---
 
-## 🎨 Tùy chỉnh CSS (SCSS Variables)
+## 🛠️ Props API
 
-Component sử dụng hệ thống **CSS Variables** để dễ dàng đồng bộ với UI chung. Hãy đảm bảo các biến sau đã được khai báo trong file CSS toàn cục (`variables.scss` hoặc tương đương):
+### Props liên quan đến Tooltip
 
-```scss
---color-primary: #1677ff; // Màu chủ đạo
---color-danger: #ff4d4f; // Màu lỗi / xóa
---color-border: #d9d9d9; // Màu viền
---radius-md: 8px; // Bo góc Select
-```
+| Prop            | Kiểu     | Mô tả                                    |
+| --------------- | -------- | ---------------------------------------- |
+| `maxTagDisplay` | `number` | Số tag hiển thị trước khi gộp thành `+n` |
 
----
+📌 Tooltip **tự động kích hoạt** khi:
 
-## 📝 Lưu ý quan trọng
+- `multiple = true`
+- Số lượng value > `maxTagDisplay`
 
-- 🗑️ **Icon Thùng rác**: Toàn bộ icon xóa (từng tag và xóa tất cả) đã được thống nhất dùng **Trash2**.
-- 🧩 **Layout Fix**: Component đã xử lý `flex-wrap` để khi chọn nhiều tag, các tag sẽ tự động xuống dòng mà không làm vỡ layout.
+> Tooltip sử dụng **Radix UI Tooltip**, đảm bảo accessibility và positioning chính xác.
 
 ---
 
-> 💡 CSSelect được thiết kế theo hướng **headless + design-system friendly**, phù hợp cho các dự án enterprise hoặc admin dashboard yêu cầu khả năng tái sử dụng cao.
+## 🛠️ Props API
+
+| Prop            | Kiểu                                              | Mặc định  | Ý nghĩa            |
+| --------------- | ------------------------------------------------- | --------- | ------------------ |
+| `label`         | `string`                                          | -         | Nhãn hiển thị      |
+| `required`      | `boolean`                                         | `false`   | Hiện dấu \*        |
+| `options`       | `Option[] \| Group[]`                             | -         | Dữ liệu select     |
+| `value`         | `string \| string[]`                              | -         | Giá trị được chọn  |
+| `onChange`      | `(val) => void`                                   | -         | Callback thay đổi  |
+| `multiple`      | `boolean`                                         | `false`   | Chọn nhiều         |
+| `isSearchable`  | `boolean`                                         | `false`   | Bật search         |
+| `showSelectAll` | `boolean`                                         | `false`   | Chọn tất cả        |
+| `showClearAll`  | `boolean`                                         | `false`   | Xóa nhanh          |
+| `maxTagDisplay` | `number`                                          | `3`       | Giới hạn tag       |
+| `isLoading`     | `boolean`                                         | `false`   | Trạng thái loading |
+| `variant`       | `default \| success \| warning \| danger \| info` | `default` | Màu sắc            |
+| `error`         | `string`                                          | -         | Thông báo lỗi      |
+
+---
+
+## 🎨 Styling & Variant
+
+CSSelect sử dụng **CSS Variables**, tự động kế thừa theme của hệ thống:
+
+- `--color-primary`
+- `--color-danger`
+- `--radius-md`
+
+Variant chỉ thay đổi **semantic color**, không ảnh hưởng logic.
+
+---
+
+## ⚠️ Lưu ý quan trọng
+
+- CSSelect **không dùng uncontrolled**
+- `value` phải đúng kiểu với `multiple`
+- Không truyền object vào `value`, chỉ dùng `string`
+
+---
+
+## ✅ Khi nào nên dùng CSSelect?
+
+✔ Form Admin / Dashboard
+✔ Filter / Search nâng cao
+✔ Design System dùng chung
+
+> CSSelect được thiết kế để **ổn định – dễ đọc – khó dùng sai**.

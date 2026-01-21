@@ -1,5 +1,6 @@
 import React, { useState, useMemo, useCallback } from "react";
 import * as Popover from "@radix-ui/react-popover";
+import * as Tooltip from "@radix-ui/react-tooltip";
 import { Check, ChevronDown, Search, X, CheckSquare } from "lucide-react";
 import "./styles.scss";
 
@@ -25,7 +26,6 @@ export interface CSSelectProps {
   required?: boolean;
   options: CSSelectOption[] | CSSelectGroup[];
   value?: string | string[];
-  // Fix: Thay 'any' bằng kiểu dữ liệu cụ thể
   onChange?: (value: string | string[]) => void;
   placeholder?: string;
   error?: string;
@@ -73,9 +73,9 @@ export default function CSSelect({
   multiple = false,
   isSearchable = false,
   maxTagDisplay = 3,
-  showClearAll = true,
-  showSelectAll = true,
-  isLoading = false, // Sẽ được sử dụng bên dưới
+  showClearAll = false,
+  showSelectAll = false,
+  isLoading = false,
   variant = "default",
 }: CSSelectProps) {
   const [open, setOpen] = useState(false);
@@ -125,8 +125,9 @@ export default function CSSelect({
     if (multiple && Array.isArray(value)) {
       if (value.length === 0)
         return <span className="cs-select__placeholder">{placeholder}</span>;
+
       const visibleTags = value.slice(0, maxTagDisplay);
-      const remainingCount = value.length - maxTagDisplay;
+      const hiddenValues = value.slice(maxTagDisplay);
 
       return (
         <div className="cs-select__tags">
@@ -146,8 +147,36 @@ export default function CSSelect({
               </span>
             ) : null;
           })}
-          {remainingCount > 0 && (
-            <span className="cs-select__tag-more">+{remainingCount}</span>
+
+          {hiddenValues.length > 0 && (
+            <Tooltip.Provider delayDuration={200}>
+              <Tooltip.Root>
+                <Tooltip.Trigger asChild>
+                  <span className="cs-select__tag-more">
+                    +{hiddenValues.length}
+                  </span>
+                </Tooltip.Trigger>
+                <Tooltip.Portal>
+                  <Tooltip.Content
+                    className="cs-select__tooltip"
+                    side="top"
+                    sideOffset={5}
+                  >
+                    <div className="cs-select__tooltip-list">
+                      {hiddenValues.map((v) => {
+                        const opt = allFlatOptions.find((o) => o.value === v);
+                        return (
+                          <div key={v} className="cs-select__tooltip-item">
+                            {opt?.label}
+                          </div>
+                        );
+                      })}
+                    </div>
+                    <Tooltip.Arrow className="cs-select__tooltip-arrow" />
+                  </Tooltip.Content>
+                </Tooltip.Portal>
+              </Tooltip.Root>
+            </Tooltip.Provider>
           )}
         </div>
       );
@@ -240,7 +269,6 @@ export default function CSSelect({
             )}
 
             <div className="cs-select__viewport">
-              {/* Fix: Sử dụng isLoading để hiển thị trạng thái loading */}
               {isLoading ? (
                 <div className="cs-select__loading">Đang tải dữ liệu...</div>
               ) : (

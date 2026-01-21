@@ -1,79 +1,118 @@
 .cs-btn {
-  border: none;
+  /* Biến mặc định */
+  --btn-main-color: var(--color-primary);
+  --btn-hover-color: var(--color-primary-hover);
+  --btn-light-color: var(--color-primary-ring);
+
+  position: relative;
+  border: 1px solid transparent;
   cursor: pointer;
   border-radius: var(--radius-md);
-  color: #fff;
-  background: var(--btn-bg, var(--color-primary));
-  transition: var(--transition-fast);
-  box-shadow: var(--shadow-sm);
+  font-weight: 500;
+  transition: all 0.2s ease;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 8px;
+  overflow: hidden;
+  white-space: nowrap;
 
-  &:hover:not(:disabled) {
-    background: var(--btn-bg-hover);
-    box-shadow: var(--shadow-hover-primary);
+  /* Chiều rộng */
+  &--w-full {
+    width: 100%;
+  }
+  &--w-auto {
+    width: auto;
   }
 
-  &:active:not(:disabled) {
-    box-shadow: var(--shadow-active-primary);
+  /* ===== LOGIC VARIANT ===== */
+
+  // Dạng 1: Solid - Nền màu chữ trắng
+  &--solid {
+    background: var(--btn-main-color);
+    color: #fff;
+    &:hover:not(:disabled) {
+      background: var(--btn-hover-color);
+    }
   }
 
-  &:disabled {
-    opacity: 0.6;
-    cursor: not-allowed;
-    box-shadow: none;
+  // Dạng 2: Outline - Nền trắng viền màu chữ màu (Theo yêu cầu của bạn)
+  &--outline {
+    background: #fff; // Ép nền trắng
+    color: var(--btn-main-color);
+    border-color: var(--btn-main-color);
+
+    &:hover:not(:disabled) {
+      background: var(--btn-light-color); // Màu nhạt khi hover
+      border-color: var(--btn-hover-color);
+      color: var(--btn-hover-color);
+    }
   }
 
-  /* ===== SIZE ===== */
+  // Dạng 3: Ghost - Không nền không viền
+  &--ghost {
+    background: transparent;
+    color: var(--btn-main-color);
+    &:hover:not(:disabled) {
+      background: var(--btn-light-color);
+    }
+  }
+
+  /* ===== ĐỊNH NGHĨA MÀU SẮC CHO TỪNG LOẠI ===== */
+  &--primary {
+    --btn-main-color: var(--color-primary);
+    --btn-hover-color: var(--color-primary-hover);
+    --btn-light-color: var(--color-primary-ring);
+  }
+  &--success {
+    --btn-main-color: var(--color-success);
+    --btn-hover-color: var(--color-success-hover);
+    --btn-light-color: var(--color-success-ring);
+  }
+  &--warning {
+    --btn-main-color: var(--color-warning);
+    --btn-hover-color: var(--color-warning-hover);
+    --btn-light-color: var(--color-warning-ring);
+  }
+  &--danger {
+    --btn-main-color: var(--color-danger);
+    --btn-hover-color: var(--color-danger-hover);
+    --btn-light-color: var(--color-danger-ring);
+  }
+  &--info {
+    --btn-main-color: var(--color-info);
+    --btn-hover-color: var(--color-info-hover);
+    --btn-light-color: var(--color-info-ring);
+  }
+
+  /* ===== SIZE & STATE ===== */
   &--sm {
     padding: 6px 14px;
     font-size: 12px;
   }
-
   &--md {
     padding: 10px 20px;
     font-size: 14px;
   }
-
   &--lg {
     padding: 14px 28px;
     font-size: 16px;
   }
 
-  /* ===== COLOR VARIANTS ===== */
-  &--primary {
-    --btn-bg: var(--color-primary);
-    --btn-bg-hover: var(--color-primary-hover);
-  }
-
-  &--success {
-    --btn-bg: var(--color-success);
-    --btn-bg-hover: var(--color-success-hover);
-  }
-
-  &--warning {
-    --btn-bg: var(--color-warning);
-    --btn-bg-hover: var(--color-warning-hover);
-  }
-
-  &--danger {
-    --btn-bg: var(--color-danger);
-    --btn-bg-hover: var(--color-danger-hover);
-  }
-
-  &--info {
-    --btn-bg: var(--color-info);
-    --btn-bg-hover: var(--color-info-hover);
-  }
-
-  /* ===== LOADING ===== */
   &__loader {
-    display: inline-flex;
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    display: flex;
   }
 
   &__content--hidden {
-    opacity: 0;
+    visibility: hidden;
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
   }
 }
