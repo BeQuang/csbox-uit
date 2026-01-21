@@ -9,3 +9,17 @@ $radius-lg: 14px;
 /* Transition */
 $transition-fast: all 0.2s ease;
 $transition-base: all 0.3s ease;
+
+// Z-index System (Quản lý các lớp chồng lên nhau)
+$z-dropdown: 1000;
+$z-sticky: 1020;
+$z-fixed: 1030;
+$z-modal-backdrop: 1040;
+$z-modal: 1050;
+$z-popover: 1060;
+$z-tooltip: 1070;
+$z-toast: 1080;
+
+// Opacity Levels
+$opacity-muted: 0.5;
+$opacity-disabled: 0.6;

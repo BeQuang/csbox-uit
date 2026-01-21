@@ -1,46 +1,69 @@
 @use "./variables" as v;
 
 :root {
-  /* =========================
-     COLORS
-  ========================= */
-
+  /* --- 1. MÀU SẮC CHỦ ĐẠO (Primary) --- */
   --color-primary: #{v.$primary-600};
-  --color-primary-hover: #{v.$primary-700};
-  --color-primary-active: #{v.$primary-800};
+  --color-primary-hover: #{v.$primary-500};
+  --color-primary-active: #{v.$primary-700};
+  --color-primary-subtle: #{v.$primary-100};
+  /* Ring sử dụng màu 600 với độ trong suốt 20% */
+  --color-primary-ring: #{rgba(v.$primary-600, 0.2)};
 
+  /* --- 2. MÀU TRẠNG THÁI (State Colors) --- */
   --color-success: #{v.$success-600};
+  --color-success-hover: #{v.$success-500};
+  --color-success-subtle: #{v.$success-100};
+  --color-success-ring: #{rgba(v.$success-600, 0.2)};
+
   --color-warning: #{v.$warning-600};
+  --color-warning-hover: #{v.$warning-500};
+  --color-warning-subtle: #{v.$warning-100};
+  --color-warning-ring: #{rgba(v.$warning-600, 0.2)};
+
   --color-danger: #{v.$danger-600};
+  --color-danger-hover: #{v.$danger-500};
+  --color-danger-subtle: #{v.$danger-100};
+  --color-danger-ring: #{rgba(v.$danger-600, 0.2)};
 
+  --color-info: #{v.$primary-600};
+  --color-info-subtle: #{v.$primary-100};
+  --color-info-ring: #{rgba(v.$primary-600, 0.2)};
+
+  /* --- 3. MÀU NỀN & BỀ MẶT (Surface & Background) --- */
+  --color-surface: #ffffff; /* Dùng cho Card, Modal, Dropdown */
+  --color-bg-app: #{v.$gray-100}; /* Nền của toàn bộ trang (Body) */
+  --color-bg-subtle: #{v.$gray-50}; /* Nền xám cực nhẹ (Table header, Input disabled) */
+
+  /* --- 4. MÀU CHỮ & ĐƯỜNG KẺ (Text & Border) --- */
   --color-text: #{v.$gray-900};
+  --color-text-secondary: #{v.$gray-600};
   --color-text-muted: #{v.$gray-600};
+  --color-text-disabled: #{v.$gray-400};
+  --color-text-on-primary: #ffffff;
+
   --color-border: #{v.$gray-400};
-  --color-bg: #{v.$gray-100};
+  --border-width: 1px;
 
-  /* =========================
-     RADIUS
-  ========================= */
-
+  /* --- 5. HÌNH KHỐI & KÍCH THƯỚC (Shapes & Sizes) --- */
   --radius-sm: #{v.$radius-sm};
   --radius-md: #{v.$radius-md};
   --radius-lg: #{v.$radius-lg};
+  --input-height: 40px;
 
-  /* =========================
-     SHADOW
-  ========================= */
-
+  /* --- 6. ĐỔ BÓNG (Shadows) --- */
   --shadow-sm: #{v.$shadow-sm};
   --shadow-md: #{v.$shadow-md};
   --shadow-lg: #{v.$shadow-lg};
-
   --shadow-hover-primary: #{v.$shadow-hover-primary};
   --shadow-active-primary: #{v.$shadow-active-primary};
 
-  /* =========================
-     TRANSITION
-  ========================= */
-
+  /* --- 7. HIỆU ỨNG (Transitions) --- */
   --transition-fast: #{v.$transition-fast};
   --transition-base: #{v.$transition-base};
+
+  /* --- 8. LỚP HIỂN THỊ (Z-index System) --- */
+  --z-dropdown: #{v.$z-dropdown};
+  --z-modal: #{v.$z-modal};
+  --z-popover: #{v.$z-popover};
+  --z-toast: #{v.$z-toast};
 }
