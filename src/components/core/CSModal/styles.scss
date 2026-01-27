@@ -1,0 +1,239 @@
+// @/components/core/CSModal/styles.scss
+
+.cs-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(4px);
+  z-index: var(--z-modal);
+
+  // Animation cho Overlay
+  &[data-state="open"] {
+    animation: overlayShow 300ms cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  &[data-state="closed"] {
+    animation: overlayHide 200ms ease-in;
+  }
+}
+
+.cs-modal-content {
+  /* Biến mặc định */
+  --modal-accent: var(--color-primary);
+  --modal-ring: var(--color-primary-ring);
+
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: var(--color-surface);
+  border-radius: var(--radius-lg);
+  z-index: calc(var(--z-modal) + 1);
+  max-height: 85vh;
+  display: flex;
+  flex-direction: column;
+  outline: none;
+  overflow: hidden;
+
+  /* Mặc định ẩn viền và bóng */
+  box-shadow: none;
+  border-top: 0 solid transparent;
+
+  &.cs-modal--with-border {
+    border-top: 4px solid var(--modal-accent);
+  }
+
+  &.cs-modal--with-shadow {
+    box-shadow: var(--shadow-lg);
+  }
+
+  // Animation cho Content
+  &[data-state="open"] {
+    animation: contentShow 400ms cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  &[data-state="closed"] {
+    animation: contentHide 250ms cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  // ===== MÀU SẮC =====
+  &.cs-modal--primary {
+    --modal-accent: var(--color-primary);
+    --modal-ring: var(--color-primary-ring);
+  }
+  &.cs-modal--success {
+    --modal-accent: var(--color-success);
+    --modal-ring: var(--color-success-ring);
+  }
+  &.cs-modal--warning {
+    --modal-accent: var(--color-warning);
+    --modal-ring: var(--color-warning-ring);
+  }
+  &.cs-modal--danger {
+    --modal-accent: var(--color-danger);
+    --modal-ring: var(--color-danger-ring);
+  }
+  &.cs-modal--info {
+    --modal-accent: var(--color-info);
+    --modal-ring: var(--color-info-ring);
+  }
+
+  // ===== KÍCH THƯỚC =====
+  &.cs-modal--sm {
+    width: 400px;
+  }
+  &.cs-modal--md {
+    width: 550px;
+  }
+  &.cs-modal--lg {
+    width: 800px;
+  }
+  &.cs-modal--xl {
+    width: 1100px;
+  }
+  &.cs-modal--full {
+    width: 95vw;
+    height: 95vh;
+    border-radius: var(--radius-md);
+    &[data-state="open"] {
+      animation-name: fullShow;
+    }
+  }
+}
+
+.cs-modal-header {
+  padding: 20px 24px;
+  border-bottom: 1px solid var(--color-bg-subtle);
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+
+  .cs-modal--with-border & {
+    background: linear-gradient(to bottom, var(--modal-ring), transparent);
+  }
+
+  &__info {
+    flex: 1;
+    // Animation trượt nhẹ cho text bên trong
+    .cs-modal-content[data-state="open"] & {
+      animation: slideUp 400ms ease-out 100ms both;
+    }
+  }
+}
+
+.cs-modal-title {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--color-text);
+  margin: 0;
+
+  .cs-modal--with-border & {
+    color: var(--modal-accent);
+  }
+}
+
+.cs-modal-description {
+  font-size: 14px;
+  color: var(--color-text-secondary);
+  margin-top: 4px;
+}
+
+.cs-modal-body {
+  padding: 24px;
+  overflow-y: auto;
+  flex: 1;
+  color: var(--color-text);
+
+  .cs-modal-content[data-state="open"] & {
+    animation: slideUp 400ms ease-out 150ms both;
+  }
+}
+
+.cs-modal-footer {
+  padding: 16px 24px;
+  border-top: 1px solid var(--color-bg-subtle);
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  background-color: var(--color-bg-subtle);
+
+  .cs-modal-content[data-state="open"] & {
+    animation: slideUp 400ms ease-out 200ms both;
+  }
+}
+
+.cs-modal-close-trigger {
+  padding: 8px !important;
+  min-width: unset !important;
+  height: 36px !important;
+  width: 36px !important;
+  border-radius: 50% !important;
+  color: var(--color-text-muted) !important;
+  transition: all 0.2s ease !important;
+
+  &:hover {
+    background-color: var(--modal-ring) !important;
+    color: var(--modal-accent) !important;
+    transform: rotate(90deg);
+  }
+}
+
+// ===== KEYFRAMES =====
+@keyframes overlayShow {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+@keyframes overlayHide {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes contentShow {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -46%) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+}
+
+@keyframes contentHide {
+  from {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: translate(-50%, -48%) scale(0.97);
+  }
+}
+
+@keyframes fullShow {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(1.02);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

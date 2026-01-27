@@ -1,4 +1,12 @@
-import React, { useMemo, useRef, useState, useCallback } from "react";
+// @/components/core/CSInput/CSInput.tsx
+import React, {
+  useMemo,
+  useRef,
+  useState,
+  useCallback,
+  forwardRef,
+  useImperativeHandle,
+} from "react";
 import { Trash2, Eye, EyeOff } from "lucide-react";
 import "./styles.scss";
 
@@ -9,194 +17,190 @@ export type CSInputVariant =
   | "danger"
   | "info";
 
-export interface CSInputProps {
+// 1. Kế thừa toàn bộ thuộc tính chuẩn của thẻ input
+export interface CSInputProps extends Omit<
+  React.InputHTMLAttributes<HTMLInputElement>,
+  "onChange" | "value"
+> {
   label?: string;
   required?: boolean;
   value?: string | number;
   onChange?: (value: string) => void;
-  placeholder?: string;
   error?: string;
-  type?: "text" | "number" | "password";
   formatNumber?: boolean;
-  decimalSeparator?: "." | ","; // Cho phép tùy chỉnh dấu thập phân
+  decimalSeparator?: "." | ",";
   unit?: string;
   units?: string[];
   selectedUnit?: string;
   onChangeUnit?: (unit: string) => void;
   prependIcon?: React.ReactNode;
-  disabled?: boolean;
   variant?: CSInputVariant;
-  className?: string;
 }
 
-export default function CSInput({
-  label,
-  required,
-  value,
-  onChange,
-  placeholder,
-  error,
-  type = "text",
-  formatNumber = false,
-  decimalSeparator = ".",
-  unit,
-  units,
-  selectedUnit,
-  onChangeUnit,
-  prependIcon,
-  disabled = false,
-  variant = "default",
-  className = "",
-}: CSInputProps) {
-  const inputRef = useRef<HTMLInputElement>(null);
-  const [showPassword, setShowPassword] = useState(false);
-
-  const inputType = useMemo(() => {
-    if (type === "password") return showPassword ? "text" : "password";
-    return type;
-  }, [type, showPassword]);
-
-  // Hàm helper để format số thập phân
-  const formatDecimal = useCallback(
-    (val: string | number) => {
-      if (!val && val !== 0) return "";
-      const parts = String(val).split(".");
-      // Format phần nguyên
-      parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-      // Nối lại với phần thập phân (nếu có)
-      return parts.join(decimalSeparator);
+const CSInput = forwardRef<HTMLInputElement, CSInputProps>(
+  (
+    {
+      label,
+      required,
+      value,
+      onChange,
+      placeholder,
+      error,
+      type = "text",
+      formatNumber = false,
+      decimalSeparator = ".",
+      unit,
+      units,
+      selectedUnit,
+      onChangeUnit,
+      prependIcon,
+      disabled = false,
+      variant = "default",
+      className = "",
+      style,
+      ...rest
     },
-    [decimalSeparator],
-  );
+    ref,
+  ) => {
+    // Sử dụng một ref nội bộ để xử lý logic local
+    const internalRef = useRef<HTMLInputElement>(null);
+    // Đồng bộ ref từ bên ngoài với internalRef
+    useImperativeHandle(ref, () => internalRef.current!);
 
-  const displayValue = useMemo(() => {
-    if (!formatNumber || value === undefined || value === "")
-      return value ?? "";
-    return formatDecimal(value);
-  }, [value, formatNumber, formatDecimal]);
+    const [showPassword, setShowPassword] = useState(false);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    let val = e.target.value;
+    const inputType = useMemo(() => {
+      if (type === "password") return showPassword ? "text" : "password";
+      return type;
+    }, [type, showPassword]);
 
-    if (formatNumber) {
-      // 1. Loại bỏ tất cả ký tự không phải số và dấu thập phân
-      // Cho phép dấu chấm hoặc phẩy dựa trên cấu hình
-      const regex = decimalSeparator === "." ? /[^\d.]/g : /[^\d,]/g;
-      val = val.replace(regex, "");
+    const formatDecimal = useCallback(
+      (val: string | number) => {
+        if (!val && val !== 0) return "";
+        const parts = String(val).split(".");
+        parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+        return parts.join(decimalSeparator);
+      },
+      [decimalSeparator],
+    );
 
-      // 2. Chỉ cho phép một dấu thập phân duy nhất
-      const parts = val.split(decimalSeparator);
-      if (parts.length > 2) {
-        val = parts[0] + decimalSeparator + parts.slice(1).join("");
+    const displayValue = useMemo(() => {
+      if (!formatNumber || value === undefined || value === "")
+        return value ?? "";
+      return formatDecimal(value);
+    }, [value, formatNumber, formatDecimal]);
+
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+      let val = e.target.value;
+      if (formatNumber) {
+        const regex = decimalSeparator === "." ? /[^\d.]/g : /[^\d,]/g;
+        val = val.replace(regex, "");
+        const parts = val.split(decimalSeparator);
+        if (parts.length > 2) {
+          val = parts[0] + decimalSeparator + parts.slice(1).join("");
+        }
+        const standardVal = val.replace(decimalSeparator, ".");
+        onChange?.(standardVal);
+      } else {
+        onChange?.(val);
       }
+    };
 
-      // 3. Chuyển đổi về dạng chuẩn (dùng dấu chấm) để lưu vào state (chuẩn số học)
-      const standardVal = val.replace(decimalSeparator, ".");
-      onChange?.(standardVal);
-    } else {
-      onChange?.(val);
-    }
-  };
+    const handleClear = useCallback(() => {
+      onChange?.("");
+      internalRef.current?.focus();
+    }, [onChange]);
 
-  const handleClear = useCallback(() => {
-    onChange?.("");
-    inputRef.current?.focus();
-  }, [onChange]);
-
-  // Xử lý phím Enter cho các nút hành động
-  const handleKeyDownAction = (e: React.KeyboardEvent, action: () => void) => {
-    if (e.key === "Enter" || e.key === " ") {
-      e.preventDefault();
-      action();
-    }
-  };
-
-  return (
-    <div
-      className={[
-        "cs-input",
-        `cs-input--${variant}`,
-        error && "cs-input--error",
-        disabled && "cs-input--disabled",
-        className,
-      ]
-        .filter(Boolean)
-        .join(" ")}
-    >
-      {label && (
-        <label className="cs-input__label">
-          {label} {required && <span>*</span>}
-        </label>
-      )}
-
+    return (
       <div
-        className="cs-input__wrapper"
-        onClick={() => inputRef.current?.focus()}
+        style={style}
+        className={[
+          "cs-input",
+          `cs-input--${variant}`,
+          error && "cs-input--error",
+          disabled && "cs-input--disabled",
+          className,
+        ]
+          .filter(Boolean)
+          .join(" ")}
       >
-        {prependIcon && <div className="cs-input__icon">{prependIcon}</div>}
+        {label && (
+          <label className="cs-input__label">
+            {label} {required && <span>*</span>}
+          </label>
+        )}
 
-        <input
-          ref={inputRef}
-          type={inputType}
-          value={displayValue}
-          placeholder={placeholder}
-          disabled={disabled}
-          onChange={handleChange}
-        />
+        <div
+          className="cs-input__wrapper"
+          onClick={() => internalRef.current?.focus()}
+        >
+          {prependIcon && <div className="cs-input__icon">{prependIcon}</div>}
 
-        <div className="cs-input__actions" onClick={(e) => e.stopPropagation()}>
-          {type === "password" && value && (
+          <input
+            {...rest}
+            ref={internalRef}
+            type={inputType}
+            value={displayValue}
+            placeholder={placeholder}
+            disabled={disabled}
+            onChange={handleChange}
+          />
+
+          <div
+            className="cs-input__actions"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {type === "password" && value && (
+              <div
+                className="cs-input__action-btn"
+                tabIndex={0}
+                role="button"
+                onClick={() => setShowPassword(!showPassword)}
+              >
+                {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+              </div>
+            )}
+
+            {!disabled && value && value !== "" && (
+              <div
+                className="cs-input__action-btn cs-input__clear-btn"
+                tabIndex={0}
+                role="button"
+                onClick={handleClear}
+              >
+                <Trash2 size={14} />
+              </div>
+            )}
+          </div>
+
+          {(unit || units) && (
             <div
-              className="cs-input__action-btn"
-              tabIndex={0} // Cho phép focus bằng phím Tab
-              role="button"
-              onClick={() => setShowPassword(!showPassword)}
-              onKeyDown={(e) =>
-                handleKeyDownAction(e, () => setShowPassword(!showPassword))
-              }
+              className="cs-input__unit-box"
+              onClick={(e) => e.stopPropagation()}
             >
-              {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
-            </div>
-          )}
-
-          {!disabled && value && value !== "" && (
-            <div
-              className="cs-input__action-btn cs-input__clear-btn"
-              tabIndex={0}
-              role="button"
-              onClick={handleClear}
-              onKeyDown={(e) => handleKeyDownAction(e, handleClear)}
-            >
-              <Trash2 size={14} />
+              {units ? (
+                <select
+                  value={selectedUnit}
+                  onChange={(e) => onChangeUnit?.(e.target.value)}
+                  disabled={disabled}
+                >
+                  {units.map((u) => (
+                    <option key={u} value={u}>
+                      {u}
+                    </option>
+                  ))}
+                </select>
+              ) : (
+                <span>{unit}</span>
+              )}
             </div>
           )}
         </div>
-
-        {(unit || units) && (
-          <div
-            className="cs-input__unit-box"
-            onClick={(e) => e.stopPropagation()}
-          >
-            {units ? (
-              <select
-                value={selectedUnit}
-                onChange={(e) => onChangeUnit?.(e.target.value)}
-                disabled={disabled}
-              >
-                {units.map((u) => (
-                  <option key={u} value={u}>
-                    {u}
-                  </option>
-                ))}
-              </select>
-            ) : (
-              <span>{unit}</span>
-            )}
-          </div>
-        )}
+        {error && <div className="cs-input__error-text">{error}</div>}
       </div>
+    );
+  },
+);
 
-      {error && <div className="cs-input__error-text">{error}</div>}
-    </div>
-  );
-}
+CSInput.displayName = "CSInput";
+export default React.memo(CSInput);

@@ -6,7 +6,7 @@ import "./styles.scss";
 export type ButtonColor = "primary" | "success" | "warning" | "danger" | "info";
 export type ButtonVariant = "solid" | "outline" | "ghost";
 
-export interface CSButtonProps {
+export interface CSButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   children: React.ReactNode;
   onClick?: (e: React.MouseEvent<HTMLButtonElement>) => void;
   color?: ButtonColor;
