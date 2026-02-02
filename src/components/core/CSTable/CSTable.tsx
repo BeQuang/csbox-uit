@@ -5,6 +5,7 @@ import {
   getCoreRowModel,
   flexRender,
   ColumnDef,
+  RowSelectionState,
 } from "@tanstack/react-table";
 import "./styles.scss";
 
@@ -19,9 +20,14 @@ interface CSTableProps<TData> {
   isHoverable?: boolean;
   loading?: boolean;
   color?: TableColor;
+  maxHeight?: number;
   sortBy?: string;
   descending?: boolean;
   onSort?: (columnId: string) => void;
+  rowSelection?: RowSelectionState;
+  onRowSelectionChange?: React.Dispatch<
+    React.SetStateAction<RowSelectionState>
+  >;
 }
 
 export default function CSTable<TData>({
@@ -33,22 +39,33 @@ export default function CSTable<TData>({
   isHoverable = true,
   loading = false,
   color = "primary",
+  maxHeight,
   sortBy,
   descending,
   onSort,
+  rowSelection = {},
+  onRowSelectionChange,
 }: CSTableProps<TData>) {
   const table = useReactTable({
     data,
     columns,
+    state: { rowSelection },
+    enableRowSelection: true,
+    enableSorting: true,
+    onRowSelectionChange: onRowSelectionChange,
     getCoreRowModel: getCoreRowModel(),
   });
 
   return (
-    <div className={`cs-table-container cs-table-container--${color}`}>
+    <div
+      className={`cs-table-container cs-table-container--${color} ${loading ? "is-loading" : ""}`}
+    >
       {header && <div className="cs-table__header">{header}</div>}
 
-      <div className="cs-table__wrapper" style={{ position: "relative" }}>
-        {/* Thanh loading bar chạy nhỏ ở trên đỉnh bảng khi đang refresh data (đã có data cũ) */}
+      <div
+        className="cs-table__wrapper"
+        style={{ position: "relative", maxHeight: maxHeight || "auto" }}
+      >
         {loading && data.length > 0 && (
           <div className="cs-table__progress-bar"></div>
         )}
@@ -59,16 +76,37 @@ export default function CSTable<TData>({
           <thead>
             {table.getHeaderGroups().map((group) => (
               <tr key={group.id}>
-                {group.headers.map((h) => {
-                  const canSort = h.column.getCanSort();
+                {group.headers.map((h, index) => {
+                  const meta = h.column.columnDef.meta as any;
+                  // canSort chỉ true khi cột đó có enableSorting: true
+                  const columnDef = h.column.columnDef as any;
+                  const canSort = columnDef.enableSorting === true;
+                  const isFirst = index === 0;
+                  const isLast = index === group.headers.length - 1;
+                  const isStickyLeft =
+                    isFirst && meta?.sticky && meta?.stickySide === "left";
+                  const isStickyRight =
+                    isLast && meta?.sticky && meta?.stickySide === "right";
+
                   return (
                     <th
                       key={h.id}
                       onClick={() => canSort && onSort?.(h.id)}
-                      style={{ cursor: canSort ? "pointer" : "default" }}
+                      className={
+                        isStickyLeft || isStickyRight
+                          ? `sticky-col sticky-col--${meta?.stickySide}`
+                          : ""
+                      }
+                      style={{
+                        cursor: canSort ? "pointer" : "default",
+                        left: isStickyLeft ? 0 : undefined,
+                        right: isStickyRight ? 0 : undefined,
+                      }}
                     >
                       <div className="cs-table__header-cell">
                         {flexRender(h.column.columnDef.header, h.getContext())}
+
+                        {/* Icon chỉ hiển thị khi canSort === true */}
                         {canSort && (
                           <span
                             className={`cs-table__sort-icon ${sortBy === h.id ? "is-active" : ""}`}
@@ -85,31 +123,52 @@ export default function CSTable<TData>({
           </thead>
           <tbody>
             {loading && data.length === 0 ? (
-              // TRƯỜNG HỢP: Đang tải và chưa có dữ liệu (Lần đầu load)
               <tr>
                 <td colSpan={columns.length}>
                   <div className="cs-table__body-loader">
                     <div className="cs-spinner"></div>
-                    <p>Đang tải dữ liệu, vui lòng đợi...</p>
+                    <p>Đang tải dữ liệu...</p>
                   </div>
                 </td>
               </tr>
             ) : data.length > 0 ? (
-              // TRƯỜNG HỢP: Đã có dữ liệu (Sẽ hiển thị ngay khi có)
               table.getRowModel().rows.map((row) => (
-                <tr key={row.id} className={loading ? "row-fade" : ""}>
-                  {row.getVisibleCells().map((cell) => (
-                    <td key={cell.id}>
-                      {flexRender(
-                        cell.column.columnDef.cell,
-                        cell.getContext(),
-                      )}
-                    </td>
-                  ))}
+                <tr
+                  key={row.id}
+                  className={`${row.getIsSelected() ? "is-selected" : ""} ${loading ? "row-fade" : ""}`}
+                >
+                  {row.getVisibleCells().map((cell, index) => {
+                    const meta = cell.column.columnDef.meta as any;
+                    const isFirst = index === 0;
+                    const isLast = row.getVisibleCells().length - 1 === index;
+                    const isStickyLeft =
+                      isFirst && meta?.sticky && meta?.stickySide === "left";
+                    const isStickyRight =
+                      isLast && meta?.sticky && meta?.stickySide === "right";
+
+                    return (
+                      <td
+                        key={cell.id}
+                        className={
+                          isStickyLeft || isStickyRight
+                            ? `sticky-col sticky-col--${meta?.stickySide}`
+                            : ""
+                        }
+                        style={{
+                          left: isStickyLeft ? 0 : undefined,
+                          right: isStickyRight ? 0 : undefined,
+                        }}
+                      >
+                        {flexRender(
+                          cell.column.columnDef.cell,
+                          cell.getContext(),
+                        )}
+                      </td>
+                    );
+                  })}
                 </tr>
               ))
             ) : (
-              // TRƯỜNG HỢP: Đã tải xong nhưng không có dữ liệu
               <tr>
                 <td colSpan={columns.length} className="cs-table__empty">
                   Không có dữ liệu hiển thị.

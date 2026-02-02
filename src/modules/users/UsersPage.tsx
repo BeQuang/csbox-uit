@@ -1,186 +1,365 @@
-import React, { useMemo, useState, useEffect, useCallback } from "react";
-import { createColumnHelper } from "@tanstack/react-table";
-import CSTable from "@/components/core/CSTable/CSTable";
-import CSPagination from "@/components/core/CSTable/CSPagination";
-import { useCSPagination } from "@/components/core/CSTable/useCSPagination";
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import CSButton from "@/components/core/CSButton";
+import CSPagination from "@/components/core/CSTable/CSPagination";
+import CSTable from "@/components/core/CSTable/CSTable";
+import { useCSPagination } from "@/components/core/CSTable/useCSPagination";
+import {
+  ColumnDef,
+  createColumnHelper,
+  RowSelectionState,
+} from "@tanstack/react-table";
+import { useMemo, useState } from "react";
 
-// 1. Định nghĩa interface chuẩn để không dùng 'any'
-interface ITableData {
-  id: number;
-  code: string;
-  name: string;
-  amount: string;
-  status: "Active" | "Pending" | "Blocked";
-}
+// --- MOCK DATA ---
+const MOCK_DATA = Array.from({ length: 50 }).map((_, i) => ({
+  id: i + 1,
+  code: `USR-${(i + 1).toString().padStart(3, "0")}`,
+  name: `Nhân viên ${String.fromCharCode(65 + (i % 26))}`,
+  department: ["Kinh doanh", "Kỹ thuật", "Nhân sự", "Marketing"][i % 4],
+  email: `user.name.${i}@example.com`,
+  role: i % 3 === 0 ? "Admin" : "User",
+  status: i % 4 === 0 ? "Blocked" : i % 3 === 0 ? "Pending" : "Active",
+  lastLogin: "2024-05-20 10:30",
+  balance: (1000000 * (i + 1)).toLocaleString("vi-VN") + "đ",
+}));
 
-const columnHelper = createColumnHelper<ITableData>();
+type UserData = (typeof MOCK_DATA)[0];
+const columnHelper = createColumnHelper<UserData>();
 
 export default function UsersPage() {
+  // 1. Hook Pagination & Sort logic
   const {
     pagination,
-    handleSort,
     handlePageChange,
     handleRowsPerPageChange,
-    setTotalRows,
+    handleSort, // Hàm này sẽ cập nhật state sortBy/descending
   } = useCSPagination("id");
-  const [managerData, setManagerData] = useState<ITableData[]>([]);
-  const [loading, setLoading] = useState(false);
 
-  // 2. Tách hàm fetch ra để fix lỗi cascading renders của useEffect
-  const loadData = useCallback(async () => {
-    setLoading(true); // Gọi trong flow async
-    try {
-      // Giả lập delay API
-      await new Promise((resolve) => setTimeout(resolve, 800));
+  // 2. State Selection
+  const [rowSelection, setRowSelection] = useState<RowSelectionState>({});
 
-      const mock: ITableData[] = Array.from({
-        length: pagination.rowsPerPage,
-      }).map((_, i) => ({
-        id: (pagination.page - 1) * pagination.rowsPerPage + i + 1,
-        code: `USR-00${(pagination.page - 1) * pagination.rowsPerPage + i + 1}`,
-        name: `Nguyễn Văn ${String.fromCharCode(65 + i)}`,
-        amount: "5.000.000đ",
-        status: i % 2 === 0 ? "Active" : "Pending",
-      }));
-
-      setManagerData(mock);
-      setTotalRows(100);
-    } finally {
-      setLoading(false);
-    }
-  }, [pagination.page, pagination.rowsPerPage, setTotalRows]);
-
-  useEffect(() => {
-    loadData();
-  }, [loadData]);
-
-  // 3. Định nghĩa cột
-  const columns = useMemo(
+  // 3. Columns Definition (Full Feature)
+  const fullColumns = useMemo<ColumnDef<UserData, any>[]>(
     () => [
-      columnHelper.accessor("code", { header: "Mã số", enableSorting: true }),
-      columnHelper.accessor("name", {
-        header: "Họ và tên",
-        enableSorting: true,
-      }),
-      columnHelper.accessor("amount", { header: "Số dư", enableSorting: true }),
-      columnHelper.accessor("status", {
-        header: "Trạng thái",
+      // Cột 1: Checkbox (Sticky Left)
+      {
+        id: "select",
+        header: ({ table }) => (
+          <input
+            type="checkbox"
+            checked={table.getIsAllPageRowsSelected()}
+            onChange={table.getToggleAllPageRowsSelectedHandler()}
+            style={{ cursor: "pointer" }}
+          />
+        ),
+        cell: ({ row }) => (
+          <input
+            type="checkbox"
+            checked={row.getIsSelected()}
+            onChange={row.getToggleSelectedHandler()}
+            style={{ cursor: "pointer" }}
+          />
+        ),
+        meta: { sticky: true, stickySide: "left" },
+        enableSorting: false, // Tắt sort cột này
+        size: 50,
+      },
+      // Các cột dữ liệu thường
+      columnHelper.accessor("code", { header: "Mã NV" }),
+      columnHelper.accessor("name", { header: "Họ và tên" }),
+      columnHelper.accessor("email", { header: "Email" }),
+      columnHelper.accessor("department", { header: "Phòng ban" }),
+      columnHelper.accessor("balance", {
+        header: "Doanh số",
         cell: (info) => (
-          <span
-            className={`cs-status-badge cs-status-badge--${info.getValue().toLowerCase()}`}
-          >
+          <span style={{ fontFamily: "monospace", fontWeight: 600 }}>
             {info.getValue()}
           </span>
         ),
+        enableSorting: true,
       }),
+      columnHelper.accessor("status", {
+        header: "Trạng thái",
+        cell: (info) => {
+          const val = info.getValue();
+          const colors: Record<string, string> = {
+            Active: "var(--color-success)",
+            Pending: "var(--color-warning)",
+            Blocked: "var(--color-danger)",
+          };
+          return (
+            <span
+              style={{
+                color: colors[val],
+                fontWeight: "bold",
+                border: `1px solid ${colors[val]}`,
+                padding: "2px 8px",
+                borderRadius: "12px",
+                fontSize: "12px",
+              }}
+            >
+              {val}
+            </span>
+          );
+        },
+      }),
+      // Cột cuối: Hành động (Sticky Right)
+      {
+        id: "actions",
+        header: "Thao tác",
+        cell: () => (
+          <div style={{ display: "flex", gap: "5px" }}>
+            <button
+              style={{
+                padding: "4px 8px",
+                border: "1px solid #ccc",
+                borderRadius: "4px",
+                background: "#fff",
+                cursor: "pointer",
+              }}
+            >
+              Sửa
+            </button>
+            <button
+              style={{
+                padding: "4px 8px",
+                border: "1px solid var(--color-danger)",
+                color: "var(--color-danger)",
+                borderRadius: "4px",
+                background: "#fff",
+                cursor: "pointer",
+              }}
+            >
+              Xóa
+            </button>
+          </div>
+        ),
+        meta: { sticky: true, stickySide: "right" },
+        enableSorting: false,
+      },
     ],
     [],
   );
 
-  // Dữ liệu tĩnh cho các bảng demo khác để tránh lỗi linter
-  const staticData: ITableData[] = [
-    {
-      id: 1,
-      code: "STATIC-01",
-      name: "Dữ liệu mẫu 1",
-      amount: "1.000đ",
-      status: "Active",
-    },
-    {
-      id: 2,
-      code: "STATIC-02",
-      name: "Dữ liệu mẫu 2",
-      amount: "2.000đ",
-      status: "Blocked",
-    },
-  ];
+  // 4. Simple Columns (Cho các ví dụ nhỏ)
+  const simpleColumns = useMemo(
+    () => [
+      columnHelper.accessor("name", { header: "Tên" }),
+      columnHelper.accessor("role", { header: "Quyền" }),
+      columnHelper.accessor("lastLogin", { header: "Đăng nhập" }),
+    ],
+    [],
+  );
+
+  // --- RENDER HELPERS ---
+  const selectedCount = Object.keys(rowSelection).length;
 
   return (
     <div
       style={{
         padding: "40px",
+        backgroundColor: "var(--color-bg-app)",
+        minHeight: "100vh",
         display: "flex",
         flexDirection: "column",
         gap: "60px",
       }}
     >
-      {/* CASE 1: QUẢN TRỊ (MÀU WARNING) */}
+      {/* =================================================================================
+          PHẦN 1: BẢNG "KITCHEN SINK" - TÍCH HỢP ĐẦY ĐỦ TÍNH NĂNG
+          (Sort, Select, Sticky, Pagination, Custom Header, Scroll)
+         ================================================================================= */}
       <section>
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "space-between",
-            marginBottom: "16px",
-          }}
-        >
-          <h3 style={{ color: "var(--color-warning)" }}>
-            1. Quản lý chính (Warning Theme)
-          </h3>
-          <CSButton color="warning" size="sm" onClick={() => {}}>
-            Thêm mới
-          </CSButton>
+        <div style={{ marginBottom: "16px" }}>
+          <h2 style={{ color: "var(--color-primary)", marginBottom: "8px" }}>
+            1. Bảng dữ liệu chính (Full Features)
+          </h2>
+          <p style={{ color: "var(--color-text-secondary)" }}>
+            Tính năng: <b>Sticky Col</b> (Trái/Phải), <b>Sort</b> (Click
+            header),
+            <b> Selection</b> (Checkbox), <b>Pagination</b>, <b>Max Height</b>{" "}
+            (Scroll).
+          </p>
         </div>
+
         <CSTable
-          columns={columns}
-          data={managerData}
-          loading={loading}
-          color="warning"
+          // Data & Columns
+          data={MOCK_DATA.slice(0, pagination.rowsPerPage)} // Giả lập phân trang client
+          columns={fullColumns}
+          // Appearance
+          color="primary" // Theme màu xanh dương
+          maxHeight={400} // Bật chế độ cuộn dọc, cố định Header
+          isStriped={true} // Nền sọc ngựa vằn
+          isHoverable={true} // Hiệu ứng hover dòng
+          // Selection Logic
+          rowSelection={rowSelection}
+          onRowSelectionChange={setRowSelection}
+          // Sorting Logic
           sortBy={pagination.sortBy}
           descending={pagination.descending}
-          onSort={handleSort}
+          onSort={handleSort} // Hàm từ hook useCSPagination
+          // Custom Header (Thanh công cụ bên trên bảng)
+          header={
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+              }}
+            >
+              <span style={{ fontWeight: 600 }}>Danh sách nhân viên</span>
+              {selectedCount > 0 ? (
+                <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                  <span style={{ color: "var(--color-primary)" }}>
+                    Đã chọn: {selectedCount}
+                  </span>
+                  <CSButton size="sm" color="danger">
+                    Xóa đã chọn
+                  </CSButton>
+                </div>
+              ) : (
+                <div style={{ display: "flex", gap: 8 }}>
+                  <CSButton
+                    size="sm"
+                    variant="outline"
+                    color="primary"
+                    onClick={() => console.log(pagination)}
+                  >
+                    Xuất Excel
+                  </CSButton>
+                  <CSButton size="sm" color="primary">
+                    + Thêm mới
+                  </CSButton>
+                </div>
+              )}
+            </div>
+          }
+          // Custom Footer (Phân trang)
           footer={
             <CSPagination
-              {...pagination}
+              page={pagination.page}
+              rowsPerPage={pagination.rowsPerPage}
+              rowsNumber={MOCK_DATA.length} // Tổng số bản ghi
               onPageChange={handlePageChange}
               onPageSizeChange={handleRowsPerPageChange}
-              color="warning"
+              color="primary" // Màu pagination đồng bộ với bảng
             />
           }
         />
       </section>
 
-      {/* CASE 2: THÀNH CÔNG (SUCCESS) */}
+      {/* =================================================================================
+          PHẦN 2: CÁC BIẾN THỂ GIAO DIỆN (THEME & STYLES)
+         ================================================================================= */}
       <section>
-        <h3 style={{ color: "var(--color-success)", marginBottom: "16px" }}>
-          2. Giao dịch hoàn tất (Success + Striped)
-        </h3>
-        <CSTable
-          columns={columns}
-          data={staticData}
-          color="success"
-          isStriped={true}
-          isHoverable={true}
-        />
+        <h2 style={{ color: "var(--color-text)", marginBottom: "20px" }}>
+          2. Giao diện & Màu sắc (Themes)
+        </h2>
+        <div
+          style={{
+            display: "grid",
+            gridTemplateColumns: "1fr 1fr",
+            gap: "30px",
+          }}
+        >
+          {/* CASE 2.1: SUCCESS COLOR - MINIMAL */}
+          <div>
+            <h4 style={{ color: "var(--color-success)", marginBottom: "10px" }}>
+              Theme: Success (Minimal)
+            </h4>
+            <p
+              style={{ fontSize: "13px", color: "#666", marginBottom: "10px" }}
+            >
+              <code>isStriped=false</code>, <code>footer=null</code>. Dùng cho
+              bảng widget nhỏ.
+            </p>
+            <CSTable
+              columns={simpleColumns}
+              data={MOCK_DATA.slice(0, 5)}
+              color="success"
+              isStriped={false} // Tắt sọc
+              isHoverable={true}
+            />
+          </div>
+
+          {/* CASE 2.2: INFO COLOR - STATIC */}
+          <div>
+            <h4 style={{ color: "var(--color-info)", marginBottom: "10px" }}>
+              Theme: Info (Static)
+            </h4>
+            <p
+              style={{ fontSize: "13px", color: "#666", marginBottom: "10px" }}
+            >
+              <code>isHoverable=false</code>. Dùng cho bảng hiển thị thông tin
+              tĩnh.
+            </p>
+            <CSTable
+              columns={simpleColumns}
+              data={MOCK_DATA.slice(0, 5)}
+              color="info"
+              isStriped={true}
+              isHoverable={false} // Tắt hover
+            />
+          </div>
+        </div>
       </section>
 
-      {/* CASE 3: CẢNH BÁO (DANGER) */}
+      {/* =================================================================================
+          PHẦN 3: CÁC TRẠNG THÁI (STATES)
+         ================================================================================= */}
       <section>
-        <h3 style={{ color: "var(--color-danger)", marginBottom: "16px" }}>
-          3. Danh sách vi phạm (Danger)
-        </h3>
-        <CSTable
-          columns={columns}
-          data={staticData}
-          color="danger"
-          isStriped={false}
-        />
-      </section>
+        <h2 style={{ color: "var(--color-text)", marginBottom: "20px" }}>
+          3. Trạng thái dữ liệu (States)
+        </h2>
+        <div
+          style={{
+            display: "grid",
+            gridTemplateColumns: "repeat(3, 1fr)",
+            gap: "30px",
+          }}
+        >
+          {/* CASE 3.1: LOADING OVERLAY (Có dữ liệu cũ + Đang tải mới) */}
+          <div>
+            <h4 style={{ marginBottom: "10px" }}>Loading Overlay</h4>
+            <p style={{ fontSize: "12px", color: "#666", marginBottom: 5 }}>
+              Dữ liệu vẫn hiển thị, spinner đè lên (dùng khi refresh/filter).
+            </p>
+            <CSTable
+              columns={simpleColumns}
+              data={MOCK_DATA.slice(0, 3)}
+              color="warning"
+              loading={true} // <--- Key prop
+            />
+          </div>
 
-      {/* CASE 4: ĐANG TẢI (LOADING) */}
-      <section>
-        <h3 style={{ color: "var(--color-info)", marginBottom: "16px" }}>
-          4. Trạng thái Loading
-        </h3>
-        <CSTable columns={columns} data={[]} color="info" loading={true} />
-      </section>
+          {/* CASE 3.2: INITIAL LOADING (Chưa có dữ liệu) */}
+          <div>
+            <h4 style={{ marginBottom: "10px" }}>Initial Loading</h4>
+            <p style={{ fontSize: "12px", color: "#666", marginBottom: 5 }}>
+              Bảng rỗng, hiển thị loader ở giữa body.
+            </p>
+            <CSTable
+              columns={simpleColumns}
+              data={[]} // Dữ liệu rỗng
+              color="primary"
+              loading={true} // <--- Key prop
+            />
+          </div>
 
-      {/* CASE 5: TRỐNG (EMPTY) */}
-      <section>
-        <h3 style={{ color: "#999", marginBottom: "16px" }}>
-          5. Trạng thái rỗng
-        </h3>
-        <CSTable columns={columns} data={[]} color="primary" />
+          {/* CASE 3.3: EMPTY STATE (Không có dữ liệu) */}
+          <div>
+            <h4 style={{ marginBottom: "10px" }}>Empty State</h4>
+            <p style={{ fontSize: "12px", color: "#666", marginBottom: 5 }}>
+              Hiển thị thông báo khi không tìm thấy kết quả.
+            </p>
+            <CSTable
+              columns={simpleColumns}
+              data={[]} // Dữ liệu rỗng
+              color="danger"
+              loading={false} // Không loading
+            />
+          </div>
+        </div>
       </section>
     </div>
   );
