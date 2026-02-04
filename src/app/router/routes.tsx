@@ -1,37 +1,29 @@
 // src/app/router/routes.tsx
-import type { Role } from "@/utils/role";
-import { ROLES } from "@/utils/role";
-
 import DashboardPage from "@/modules/dashboard/DashboardPage";
-import ProfilePage from "@/modules/profile/ProfilePage";
+import LandingPage from "@/pages/LandingPage";
 import LoginPage from "@/pages/LoginPage";
 import UnauthorizedPage from "@/pages/UnauthorizedPage";
-import UsersPage from "@/modules/users/UsersPage";
-import LandingPage from "@/pages/LandingPage";
+import type { Role } from "@/utils/role";
+import { ROLES } from "@/utils/role";
+import { profileRoutes } from "./configs/profile.routes";
+import { studyRoutes } from "./configs/study.routes";
+import { userRoutes } from "./configs/user.routes";
+import NotFoundPage from "@/pages/NotFoundPage";
 
 export interface AppRoute {
   path: string;
-  element: React.ReactNode;
+  element?: React.ReactNode;
   isProtected?: boolean;
   allowedRoles?: Role[];
-
-  // 👇 thêm cho menu
   menuLabel?: string;
+  icon?: React.ReactNode; // Thêm icon cho đẹp (optional)
+  children?: AppRoute[]; // <--- Thêm dòng này để hỗ trợ Sub-menu
 }
 
 export const routes: AppRoute[] = [
-  {
-    path: "/",
-    element: <LandingPage />,
-  },
-  {
-    path: "/login",
-    element: <LoginPage />,
-  },
-  {
-    path: "/unauthorized",
-    element: <UnauthorizedPage />,
-  },
+  { path: "/", element: <LandingPage /> },
+  { path: "/login", element: <LoginPage /> },
+  { path: "/unauthorized", element: <UnauthorizedPage /> },
   {
     path: "/dashboard",
     element: <DashboardPage />,
@@ -39,18 +31,12 @@ export const routes: AppRoute[] = [
     allowedRoles: [ROLES.ADMIN, ROLES.STAFF],
     menuLabel: "Dashboard",
   },
+  // Spread các biến đã tách vào đây
+  userRoutes,
+  studyRoutes,
+  profileRoutes,
   {
-    path: "/users",
-    element: <UsersPage />,
-    isProtected: true,
-    allowedRoles: [ROLES.ADMIN],
-    menuLabel: "Users",
-  },
-  {
-    path: "/profile",
-    element: <ProfilePage />,
-    isProtected: true,
-    allowedRoles: [ROLES.ADMIN, ROLES.STAFF, ROLES.USER],
-    menuLabel: "Profile",
+    path: "*",
+    element: <NotFoundPage />,
   },
 ];
