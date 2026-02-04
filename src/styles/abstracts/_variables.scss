@@ -1,16 +1,58 @@
+/* FILE: src/styles/abstracts/_variables.scss 
+  MỤC ĐÍCH: Tập hợp toàn bộ biến SCSS (Sass variables)
+*/
+
+// 1. Forward các file màu và bóng đổ để file khác chỉ cần @use file này là có hết
 @forward "colors";
 @forward "shadows";
 
-/* Border radius */
-$radius-sm: 6px;
-$radius-md: 10px;
-$radius-lg: 14px;
+// 2. SPACING SYSTEM (Hệ thống khoảng cách - Dựa trên 4px grid)
+$space-1: 4px;
+$space-2: 8px;
+$space-3: 12px;
+$space-4: 16px; // Base unit
+$space-5: 20px;
+$space-6: 24px;
+$space-8: 32px;
+$space-10: 40px;
+$space-12: 48px;
+$space-16: 64px;
 
-/* Transition */
-$transition-fast: all 0.2s ease;
-$transition-base: all 0.3s ease;
+// 3. TYPOGRAPHY (Hệ thống chữ)
+$font-family-base:
+  -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue",
+  Arial, sans-serif;
+$font-family-code:
+  "SFMono-Regular", Consolas, "Liberation Mono", Menlo, Courier, monospace;
 
-// Z-index System (Quản lý các lớp chồng lên nhau)
+$font-size-xs: 12px;
+$font-size-sm: 14px;
+$font-size-base: 16px;
+$font-size-lg: 18px;
+$font-size-xl: 20px;
+$font-size-2xl: 24px;
+$font-size-3xl: 30px;
+
+$font-weight-regular: 400;
+$font-weight-medium: 500;
+$font-weight-bold: 700;
+
+$line-height-base: 1.5715;
+$line-height-heading: 1.2;
+
+// 4. BORDER RADIUS
+$radius-sm: 4px;
+$radius-md: 8px;
+$radius-lg: 12px;
+$radius-round: 50%;
+$radius-pill: 999px;
+
+// 5. TRANSITIONS
+$transition-fast: all 0.2s ease-in-out;
+$transition-base: all 0.3s ease-in-out;
+$transition-slow: all 0.5s ease-in-out;
+
+// 6. Z-INDEX SYSTEM
 $z-dropdown: 1000;
 $z-sticky: 1020;
 $z-fixed: 1030;
@@ -20,6 +62,14 @@ $z-popover: 1060;
 $z-tooltip: 1070;
 $z-toast: 1080;
 
-// Opacity Levels
-$opacity-muted: 0.5;
-$opacity-disabled: 0.6;
+// 7. LAYOUT SIZES (Kích thước cố định của layout)
+$header-height: 64px;
+$sidebar-width: 250px;
+$sidebar-width-collapsed: 80px;
+
+// 8. BREAKPOINTS (Điểm gãy màn hình responsive)
+$breakpoint-sm: 576px;
+$breakpoint-md: 768px;
+$breakpoint-lg: 992px;
+$breakpoint-xl: 1200px;
+$breakpoint-2xl: 1600px;

@@ -9,6 +9,7 @@ import {
   RowSelectionState,
 } from "@tanstack/react-table";
 import { useMemo, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 // --- MOCK DATA ---
 const MOCK_DATA = Array.from({ length: 50 }).map((_, i) => ({
@@ -27,6 +28,7 @@ type UserData = (typeof MOCK_DATA)[0];
 const columnHelper = createColumnHelper<UserData>();
 
 export default function UsersPage() {
+  const navigate = useNavigate();
   // 1. Hook Pagination & Sort logic
   const {
     pagination,
@@ -361,6 +363,9 @@ export default function UsersPage() {
           </div>
         </div>
       </section>
+      <CSButton onClick={() => navigate("/users/roles/new")}>
+        Điều hướng trong trang (Tới New)
+      </CSButton>
     </div>
   );
 }

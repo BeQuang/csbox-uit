@@ -66,4 +66,24 @@
   --z-modal: #{v.$z-modal};
   --z-popover: #{v.$z-popover};
   --z-toast: #{v.$z-toast};
+
+  /* --- 9. ADMIN LAYOUT COLORS (Mapping từ palette của bạn) --- */
+  /* Sidebar tối: Dùng màu Primary-1000 (#001d66) cho tông xanh đậm sang trọng */
+  --color-sidebar-bg: #{v.$primary-1000};
+
+  /* Border sidebar: Dùng màu trắng mờ */
+  --color-sidebar-border: rgba(255, 255, 255, 0.1);
+
+  /* Thanh cuộn sidebar: Dùng gray-700 cho hợp nền tối */
+  --color-sidebar-scroll: #{v.$gray-700};
+
+  /* Topbar & Navbar: Nền trắng, chữ gray-900 */
+  --color-navbar-bg: #ffffff;
+  --color-navbar-text: #{v.$gray-900};
+  --color-topbar-border: #{v.$gray-200};
+
+  /* Custom Scrollbar Global */
+  --scrollbar-width: 6px;
+  --scrollbar-thumb: #{v.$gray-400};
+  --scrollbar-thumb-hover: #{v.$gray-600};
 }

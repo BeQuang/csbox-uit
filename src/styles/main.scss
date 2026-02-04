@@ -2,7 +2,12 @@
 @use "./abstracts/css-vars"; // 🔥 thêm dòng này
 @use "./base/global";
 
+/* Reset cơ bản để áp dụng màu nền */
 body {
-  background: var(--color-bg);
+  background-color: var(--color-bg-app);
   color: var(--color-text);
+  margin: 0;
+  font-family:
+    -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue",
+    Arial, sans-serif;
 }

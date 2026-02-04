@@ -1,29 +1,90 @@
-/* ========== ADMIN SIDEBAR ========== */
+/* ========== GLOBAL SCROLLBAR ========== */
+/* Sử dụng biến để đồng bộ style trên toàn app */
+::-webkit-scrollbar {
+  width: var(--scrollbar-width);
+  height: var(--scrollbar-width);
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--scrollbar-thumb);
+  border-radius: var(--radius-sm);
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--scrollbar-thumb-hover);
+}
+
+/* ========== ADMIN SIDEBAR & LAYOUT ========== */
 .app-layout {
-  min-height: 100vh;
+  height: 100vh;
+  overflow: hidden;
+  display: flex;
 
   &__sider {
     display: flex;
     flex-direction: column;
+    height: 100vh;
+    overflow-y: auto;
+    position: relative;
+    z-index: 10;
+
+    /* Dùng shadow-sm từ biến global thay vì hardcode */
+    box-shadow: var(--shadow-sm);
+
+    /* Tùy chỉnh thanh cuộn riêng cho Sidebar tối màu */
+    &::-webkit-scrollbar-thumb {
+      background: var(--color-sidebar-scroll);
+    }
   }
 
   &__menu {
     flex: 1;
     border-right: none;
+    width: 100%;
+    /* Nếu cần set màu nền menu trùng sidebar */
+    background: var(--color-sidebar-bg);
   }
 
   &__logout {
     padding: 16px;
-    border-top: 1px solid var(--color-divider);
+    border-top: 1px solid var(--color-sidebar-border);
+    background: var(--color-sidebar-bg);
+    position: sticky;
+    bottom: 0;
+    z-index: 11;
 
     button {
       font-weight: 500;
+      /* Nếu nút nằm trên nền tối, có thể cần set màu text sáng hơn */
+      /* color: var(--color-text-on-primary); */
     }
   }
 
+  &__topbar {
+    flex-shrink: 0;
+    height: 56px;
+
+    /* Sử dụng màu surface (trắng) và các biến border/shadow */
+    background: var(--color-surface);
+    box-shadow: var(--shadow-sm);
+    border-bottom: 1px solid var(--color-topbar-border);
+
+    display: flex;
+    align-items: center;
+    padding: 0 24px;
+
+    position: relative;
+    z-index: 10;
+  }
+
   &__content {
+    flex: 1;
+    overflow-y: auto;
     padding: 24px;
-    background: var(--color-page-bg);
+    background: var(--color-bg-app); /* Nền xám nhạt */
+    position: relative;
+    scroll-behavior: smooth;
   }
 }
 
@@ -38,14 +99,15 @@
   align-items: center;
 
   background: var(--color-navbar-bg);
-  box-shadow: var(--shadow-md);
+  box-shadow: var(--shadow-md); /* Bóng đổ đậm hơn topbar admin một chút */
 
   &__logo {
-    color: var(--color-navbar-text);
+    color: var(--color-navbar-text); /* Thường là --color-text */
     font-size: 18px;
     font-weight: 700;
     margin-right: 32px;
     white-space: nowrap;
+    cursor: pointer;
   }
 
   &__menu {
@@ -55,12 +117,25 @@
     .ant-menu {
       background: transparent;
       border-bottom: none;
+      line-height: 64px;
     }
 
     .ant-menu-item {
       padding: 0 16px;
       font-weight: 500;
       color: var(--color-navbar-text);
+
+      /* Active/Hover state */
+      &:hover,
+      &.ant-menu-item-selected {
+        color: var(--color-primary) !important;
+      }
+
+      &:hover::after,
+      &.ant-menu-item-selected::after {
+        border-bottom-width: 2px !important;
+        border-bottom-color: var(--color-primary) !important;
+      }
     }
   }
 
@@ -72,7 +147,9 @@
 
       &:hover {
         color: var(--color-danger-hover);
-        background: var(--color-danger-bg);
+        background: var(
+          --color-danger-subtle
+        ); /* Dùng subtle nền nhạt thay vì hardcode */
       }
     }
   }
@@ -84,7 +161,7 @@
 
   &__content {
     padding: 24px;
-    background: var(--color-page-bg);
+    background: var(--color-bg-app); /* Nền xám nhạt đồng bộ */
     min-height: calc(100vh - 64px);
   }
 }

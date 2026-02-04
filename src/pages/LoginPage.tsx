@@ -6,6 +6,7 @@ import { useSelector } from "react-redux";
 import { RootState } from "@/app/redux/store";
 import { useEffect, useState } from "react";
 import CSButton from "@/components/core/CSButton/CSButton";
+import { usePageTitle } from "@/hooks/userPageTitle";
 
 const { Title } = Typography;
 
@@ -15,6 +16,7 @@ export default function LoginPage() {
     (state: RootState) => state.auth,
   );
   const navigate = useNavigate();
+  usePageTitle("Trang đăng nhập");
 
   const [loading, setLoading] = useState(false);
 

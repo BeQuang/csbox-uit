@@ -4,15 +4,17 @@ import { useSelector } from "react-redux";
 import { RootState } from "@/app/redux/store";
 import { useAuthStore } from "@/app/store/auth.store";
 import "./stylesLanding.scss";
+import { usePageTitle } from "@/hooks/userPageTitle";
 
 const { Title, Paragraph } = Typography;
 
 export default function LandingPage() {
   const navigate = useNavigate();
+  usePageTitle("Trang chủ - My Education App");
 
   // Redux → chỉ quan tâm login status
   const isAuthenticated = useSelector(
-    (state: RootState) => state.auth.isAuthenticated
+    (state: RootState) => state.auth.isAuthenticated,
   );
 
   // Zustand → thực hiện logout
