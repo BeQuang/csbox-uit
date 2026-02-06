@@ -1,28 +1,52 @@
-# 📊 CSTable – Bảng dữ liệu chuẩn Design System
+# 📊 CSTable – Data Table chuẩn Design System
 
-`CSTable` là component bảng dữ liệu dùng chung trong hệ thống, xây dựng trên nền tảng **@tanstack/react-table**, hỗ trợ:
+**CSTable** là component bảng dữ liệu dùng chung trong hệ thống, được xây dựng trên nền tảng **@tanstack/react-table v8**. Component hỗ trợ đầy đủ các nhu cầu hiển thị dữ liệu trong các màn hình quản trị theo chuẩn Design System.
 
-- Sticky column trái/phải
-- Chọn dòng (row selection)
-- Sắp xếp (server-side sort trigger)
-- Loading states
-- Scroll cố định header
-- Theme màu theo Design System
-- Tích hợp phân trang với `CSPagination`
+CSTable được thiết kế theo hướng **server-side controlled table** — toàn bộ sorting, pagination và data fetching đều do component cha quản lý thông qua API.
 
 ---
 
-## 🚀 Tính năng nổi bật
+## ✨ Tính năng nổi bật
 
-✅ Dựa trên **TanStack Table v8**  
+✅ Xây dựng trên TanStack Table v8  
 ✅ Sticky header khi scroll  
-✅ Sticky column trái/phải  
-✅ Hỗ trợ **row selection (checkbox)**  
-✅ Hỗ trợ **sort icon + callback server-side**  
-✅ Có **loading overlay** & **initial loading**  
-✅ Có **empty state**  
-✅ Theme màu: `primary | success | warning | danger | info`  
-✅ Tách riêng `CSPagination` + `useCSPagination` để quản lý state
+✅ Sticky column trái / phải  
+✅ Hỗ trợ row selection  
+✅ Hỗ trợ server-side sorting (icon + callback)  
+✅ Loading overlay & initial loading state  
+✅ Empty state khi không có dữ liệu  
+✅ Theme màu theo Design System  
+`primary | success | warning | danger | info`  
+✅ Phân trang tách riêng qua **CSPagination**  
+✅ Hook quản lý state chuẩn: **useCSPagination**
+
+---
+
+## 🧠 Data Flow (QUAN TRỌNG)
+
+CSTable hoạt động theo cơ chế **server-side control**:
+
+```
+User click sort / đổi trang / đổi page size
+            ↓
+useCSPagination cập nhật state
+            ↓
+Component cha gọi API với state mới
+            ↓
+API trả về: items + total
+            ↓
+setData(items) & setTotalRows(total)
+            ↓
+CSTable render lại
+```
+
+### CSTable KHÔNG tự xử lý
+
+❌ Không tự sort data  
+❌ Không tự phân trang data  
+❌ Không tự filter data
+
+👉 Mọi xử lý dữ liệu đều nằm ở phía **server/API**
 
 ---
 
@@ -36,7 +60,7 @@ npm install @tanstack/react-table
 
 ## 📥 Import
 
-```tsx
+```ts
 import CSTable from "@/components/core/CSTable/CSTable";
 import CSPagination from "@/components/core/CSTable/CSPagination";
 import { useCSPagination } from "@/components/core/CSTable/useCSPagination";
@@ -44,7 +68,7 @@ import { useCSPagination } from "@/components/core/CSTable/useCSPagination";
 
 ---
 
-# 1️⃣ Cách dùng cơ bản
+## 1️⃣ Cách dùng cơ bản
 
 ```tsx
 <CSTable columns={columns} data={data} />
@@ -52,13 +76,40 @@ import { useCSPagination } from "@/components/core/CSTable/useCSPagination";
 
 ---
 
-# 2️⃣ Ví dụ đầy đủ (Sort + Select + Pagination)
+## 2️⃣ Ví dụ đầy đủ (Sort + Select + Pagination)
 
 ```tsx
-const { pagination, handlePageChange, handleRowsPerPageChange, handleSort } =
-  useCSPagination("id");
+const {
+  pagination,
+  handlePageChange,
+  handleRowsPerPageChange,
+  handleSort,
+  setTotalRows,
+} = useCSPagination("id");
 
 const [rowSelection, setRowSelection] = useState({});
+const [data, setData] = useState<User[]>([]);
+
+useEffect(() => {
+  const fetchUsers = async () => {
+    const res = await api.getUsers({
+      page: pagination.page,
+      limit: pagination.rowsPerPage,
+      sortBy: pagination.sortBy,
+      order: pagination.descending ? "desc" : "asc",
+    });
+
+    setData(res.items);
+    setTotalRows(res.total); // 🔥 BẮT BUỘC để pagination đúng
+  };
+
+  fetchUsers();
+}, [
+  pagination.page,
+  pagination.rowsPerPage,
+  pagination.sortBy,
+  pagination.descending,
+]);
 
 <CSTable
   data={data}
@@ -73,7 +124,7 @@ const [rowSelection, setRowSelection] = useState({});
     <CSPagination
       page={pagination.page}
       rowsPerPage={pagination.rowsPerPage}
-      rowsNumber={totalRows}
+      rowsNumber={pagination.rowsNumber}
       onPageChange={handlePageChange}
       onPageSizeChange={handleRowsPerPageChange}
     />
@@ -83,30 +134,30 @@ const [rowSelection, setRowSelection] = useState({});
 
 ---
 
-# 3️⃣ Props của CSTable
+## 3️⃣ Props của CSTable
 
-| Prop                   | Kiểu                 | Mặc định  | Mô tả                          |
-| ---------------------- | -------------------- | --------- | ------------------------------ |
-| `columns`              | `ColumnDef<TData>[]` | —         | Cấu hình cột                   |
-| `data`                 | `TData[]`            | —         | Dữ liệu bảng                   |
-| `header`               | `ReactNode`          | —         | Thanh phía trên bảng           |
-| `footer`               | `ReactNode`          | —         | Footer (thường là phân trang)  |
-| `isStriped`            | `boolean`            | `true`    | Sọc zebra                      |
-| `isHoverable`          | `boolean`            | `true`    | Hover highlight                |
-| `loading`              | `boolean`            | `false`   | Trạng thái loading             |
-| `color`                | `TableColor`         | `primary` | Theme màu                      |
-| `maxHeight`            | `number`             | —         | Chiều cao tối đa để bật scroll |
-| `sortBy`               | `string`             | —         | ID cột đang sort               |
-| `descending`           | `boolean`            | —         | Hướng sort                     |
-| `onSort`               | `(columnId) => void` | —         | Callback khi click header      |
-| `rowSelection`         | `RowSelectionState`  | `{}`      | State selected rows            |
-| `onRowSelectionChange` | `fn`                 | —         | Callback khi chọn dòng         |
+| Prop                 | Kiểu                       | Mặc định | Mô tả                          |
+| -------------------- | -------------------------- | -------- | ------------------------------ |
+| columns              | ColumnDef<TData>[]         | —        | Cấu hình cột                   |
+| data                 | TData[]                    | —        | Dữ liệu của trang hiện tại     |
+| header               | ReactNode                  | —        | Thanh phía trên bảng           |
+| footer               | ReactNode                  | —        | Footer (thường là phân trang)  |
+| isStriped            | boolean                    | true     | Hiển thị zebra row             |
+| isHoverable          | boolean                    | true     | Highlight khi hover            |
+| loading              | boolean                    | false    | Trạng thái loading             |
+| color                | TableColor                 | primary  | Theme màu bảng                 |
+| maxHeight            | number                     | —        | Chiều cao tối đa để bật scroll |
+| sortBy               | string                     | —        | ID cột đang sort               |
+| descending           | boolean                    | —        | Hướng sort                     |
+| onSort               | (columnId: string) => void | —        | Callback khi click header      |
+| rowSelection         | RowSelectionState          | {}       | State selected rows            |
+| onRowSelectionChange | function                   | —        | Callback khi chọn dòng         |
 
 ---
 
-# 4️⃣ Định nghĩa Column
+## 4️⃣ Định nghĩa Column
 
-```tsx
+```ts
 const columns: ColumnDef<User>[] = [
   {
     id: "select",
@@ -130,26 +181,29 @@ const columns: ColumnDef<User>[] = [
   {
     accessorKey: "name",
     header: "Họ tên",
-  },
-  {
-    accessorKey: "email",
-    header: "Email",
-  },
-  {
-    id: "actions",
-    header: "Thao tác",
-    cell: () => <button>Sửa</button>,
-    enableSorting: false,
-    meta: { sticky: true, stickySide: "right" },
+    enableSorting: true, // ⚠️ Phải bật nếu muốn sort
   },
 ];
 ```
 
+### ⚠️ Sorting Rule
+
+Mặc định cột **KHÔNG được sort**.  
+Muốn bật sort:
+
+```ts
+{
+  accessorKey: "name",
+  header: "Họ tên",
+  enableSorting: true
+}
+```
+
+Nếu không có `enableSorting: true` → icon sort sẽ không xuất hiện.
+
 ---
 
 ## 📌 Sticky Column
-
-Để cố định cột trái/phải:
 
 ```ts
 meta: {
@@ -158,31 +212,13 @@ meta: {
 }
 ```
 
----
-
-## 🔃 Sorting (Server-side)
-
-CSTable **không tự sort data**, mà chỉ bắn sự kiện:
-
-```tsx
-<CSTable
-  sortBy={pagination.sortBy}
-  descending={pagination.descending}
-  onSort={handleSort}
-/>
-```
-
-Hook hỗ trợ:
-
-```tsx
-const { pagination, handleSort } = useCSPagination("id");
-```
+🔸 Khuyến nghị chỉ dùng **tối đa 1 cột mỗi bên** để tránh vỡ layout.
 
 ---
 
-# 5️⃣ Loading States
+## 5️⃣ Loading States
 
-### Loading khi đã có dữ liệu (overlay)
+### Loading khi đã có dữ liệu
 
 ```tsx
 <CSTable data={data} columns={columns} loading />
@@ -196,7 +232,7 @@ const { pagination, handleSort } = useCSPagination("id");
 
 ---
 
-# 6️⃣ Empty State
+## 6️⃣ Empty State
 
 ```tsx
 <CSTable data={[]} columns={columns} />
@@ -206,36 +242,18 @@ Hiển thị: **"Không có dữ liệu hiển thị."**
 
 ---
 
-# 7️⃣ Theme màu
-
-```tsx
-color = "primary" | "success" | "warning" | "danger" | "info";
-```
-
-Áp dụng cho:
-
-- Border top
-- Header background
-- Hover row
-- Spinner
-- Pagination active
-
----
-
-# 8️⃣ Scroll & Sticky Header
+## 7️⃣ Scroll & Sticky Header
 
 ```tsx
 <CSTable columns={columns} data={data} maxHeight={400} />
 ```
 
-Khi đó:
-
-- Header cố định
-- Body cuộn dọc
+✔ Header cố định  
+✔ Body cuộn dọc
 
 ---
 
-# 9️⃣ CSPagination
+## 8️⃣ CSPagination
 
 ```tsx
 <CSPagination
@@ -247,21 +265,11 @@ Khi đó:
 />
 ```
 
-### Props
-
-| Prop               | Mô tả                 |
-| ------------------ | --------------------- |
-| `page`             | Trang hiện tại        |
-| `rowsPerPage`      | Số dòng mỗi trang     |
-| `rowsNumber`       | Tổng số dòng          |
-| `onPageChange`     | Đổi trang             |
-| `onPageSizeChange` | Đổi số dòng mỗi trang |
-
 ---
 
-# 🔟 useCSPagination Hook
+## 9️⃣ useCSPagination Hook
 
-```tsx
+```ts
 const {
   pagination,
   handleSort,
@@ -271,7 +279,7 @@ const {
 } = useCSPagination("id");
 ```
 
-### State trả về
+### State quản lý
 
 ```ts
 {
@@ -281,15 +289,36 @@ const {
 
 ---
 
-## 🎯 Khi nào nên dùng CSTable?
+## 🔒 Controlled Component
 
-| Trường hợp                | Dùng CSTable |
-| ------------------------- | ------------ |
-| Danh sách người dùng      | ✅           |
-| Bảng quản lý đơn hàng     | ✅           |
-| Bảng báo cáo              | ✅           |
-| Layout tĩnh không có data | ❌           |
+CSTable là **controlled component**
+
+| State         | Quản lý ở đâu |
+| ------------- | ------------- |
+| Sorting       | Component cha |
+| Pagination    | Component cha |
+| Row Selection | Component cha |
 
 ---
 
-CSTable giúp toàn bộ hệ thống có **một chuẩn bảng dữ liệu thống nhất, mạnh mẽ và mở rộng dễ dàng** 🚀
+## ✅ Best Practices
+
+✔ Luôn gọi `setTotalRows(total)` sau mỗi lần fetch API  
+✔ Không truyền toàn bộ data khi dùng server-side pagination  
+✔ Sticky column chỉ nên dùng tối đa 1 cột mỗi bên  
+✔ Không xử lý sort/filter ở client nếu đã dùng server-side
+
+---
+
+## 🎯 Khi nào nên dùng CSTable?
+
+| Trường hợp             | Dùng CSTable |
+| ---------------------- | ------------ |
+| Danh sách người dùng   | ✅           |
+| Quản lý đơn hàng       | ✅           |
+| Bảng báo cáo           | ✅           |
+| Layout tĩnh không data | ❌           |
+
+---
+
+**CSTable** giúp toàn hệ thống có một chuẩn bảng dữ liệu thống nhất, mạnh mẽ và dễ mở rộng. 🚀

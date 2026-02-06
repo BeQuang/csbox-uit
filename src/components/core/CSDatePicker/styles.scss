@@ -1,0 +1,190 @@
+.cs-datepicker-outer {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+
+  /* Biến local cho Input */
+  --dp-color-primary: var(--color-primary);
+  --dp-color-hover: var(--color-primary-hover);
+  --dp-color-shadow: var(--color-primary-ring);
+
+  &.cs-datepicker--success {
+    --dp-color-primary: var(--color-success);
+    --dp-color-hover: var(--color-success-hover);
+    --dp-color-shadow: var(--color-success-ring);
+  }
+  &.cs-datepicker--warning {
+    --dp-color-primary: var(--color-warning);
+    --dp-color-hover: var(--color-warning-hover);
+    --dp-color-shadow: var(--color-warning-ring);
+  }
+  &.cs-datepicker--danger {
+    --dp-color-primary: var(--color-danger);
+    --dp-color-hover: var(--color-danger-hover);
+    --dp-color-shadow: var(--color-danger-ring);
+  }
+  &.cs-datepicker--info {
+    --dp-color-primary: var(--color-info);
+    --dp-color-hover: var(--color-info-hover);
+    --dp-color-shadow: var(--color-info-ring);
+  }
+
+  /* 1. Base Input & Range Input */
+  .ant-picker.ant-picker-outlined {
+    --ant-color-primary: var(--dp-color-primary);
+    --ant-color-primary-hover: var(--dp-color-hover);
+    --ant-control-outline: var(--dp-color-shadow);
+    border-radius: var(--radius-md);
+
+    &:hover {
+      border-color: var(--dp-color-primary) !important;
+    }
+
+    // Trạng thái focus cho cả Date và Range
+    &:focus,
+    &-focused,
+    &:focus-within {
+      border-color: var(--dp-color-primary) !important;
+      box-shadow: 0 0 0 2px var(--dp-color-shadow) !important;
+    }
+
+    // Thanh bar phía dưới khi focus vào ô Start/End của RangePicker
+    .ant-picker-active-bar {
+      background: var(--dp-color-primary) !important;
+    }
+  }
+
+  /* 2. Error State */
+  .ant-picker-status-error.ant-picker-outlined {
+    &:focus,
+    &-focused {
+      box-shadow: 0 0 0 2px var(--color-danger-ring) !important;
+    }
+  }
+
+  /* 3. Label & Error Msg */
+  .cs-datepicker-label {
+    font-size: var(--font-size-sm);
+    font-weight: 500;
+    color: var(--color-text-secondary);
+    .required-mark {
+      color: var(--color-danger);
+      margin-left: 2px;
+    }
+  }
+  .cs-datepicker-error-msg {
+    color: var(--color-danger);
+    font-size: 12px;
+    margin-top: 4px;
+  }
+}
+
+/* ---------------------------------------------------------
+   DROP DOWN (POPUP LỊCH & THỜI GIAN)
+   --------------------------------------------------------- */
+.cs-datepicker-dropdown {
+  --dp-main: var(--color-primary);
+
+  &--success {
+    --dp-main: var(--color-success);
+  }
+  &--warning {
+    --dp-main: var(--color-warning);
+  }
+  &--danger {
+    --dp-main: var(--color-danger);
+  }
+  &--info {
+    --dp-main: var(--color-info);
+  }
+
+  /* A. Header & Nav Buttons */
+  .ant-picker-header button:hover,
+  .ant-picker-header-view button:hover {
+    color: var(--dp-main) !important;
+  }
+
+  /* B. Calendar Cells */
+  .ant-picker-cell-in-view {
+    // Ngày được chọn (Single & Range Start/End)
+    &.ant-picker-cell-selected .ant-picker-cell-inner,
+    &.ant-picker-cell-range-start .ant-picker-cell-inner,
+    &.ant-picker-cell-range-end .ant-picker-cell-inner {
+      background: var(--dp-main) !important;
+      color: #fff !important;
+      border-radius: var(--radius-sm);
+    }
+
+    // Ngày hôm nay
+    &.ant-picker-cell-today .ant-picker-cell-inner::before {
+      border-color: var(--dp-main) !important;
+    }
+
+    // Hover ngày bất kỳ
+    &:hover .ant-picker-cell-inner {
+      color: var(--dp-main) !important;
+      background: var(--color-bg-subtle) !important;
+    }
+  }
+
+  /* C. Range Picker Specific (Dải màu khi chọn khoảng) */
+  .ant-picker-cell-in-range {
+    &::before {
+      background: var(--dp-main) !important;
+      opacity: 0.1; // Dải màu nhạt nối giữa 2 ngày
+    }
+  }
+
+  // Trạng thái hover khi đang kéo chọn khoảng
+  .ant-picker-cell-range-hover-start,
+  .ant-picker-cell-range-hover-end,
+  .ant-picker-cell-range-hover {
+    &::after {
+      border-color: var(--dp-main) !important;
+      opacity: 0.2;
+    }
+  }
+
+  /* D. Time Picker Panel */
+  .ant-picker-time-panel-column > li {
+    &:hover .ant-picker-time-panel-cell-inner {
+      background: var(--color-bg-subtle) !important;
+      color: var(--dp-main) !important;
+    }
+    &.ant-picker-time-panel-cell-selected .ant-picker-time-panel-cell-inner {
+      background: var(--dp-main) !important;
+      color: #fff !important;
+      border-radius: 4px;
+    }
+  }
+
+  /* E. Footer (Today, Now, OK Button) */
+  .ant-picker-footer {
+    .ant-picker-today-btn,
+    .ant-picker-now-btn,
+    .ant-picker-presets > li {
+      color: var(--dp-main) !important;
+      &:hover {
+        opacity: 0.7;
+      }
+    }
+
+    .ant-btn-primary {
+      background: var(--dp-main) !important;
+      border-color: var(--dp-main) !important;
+      &:hover {
+        opacity: 0.8;
+        filter: brightness(1.1);
+      }
+    }
+  }
+
+  /* F. Quick Selection Panels (Month/Year/Decade) */
+  .ant-picker-year-panel,
+  .ant-picker-month-panel,
+  .ant-picker-decade-panel {
+    .ant-picker-cell-selected .ant-picker-cell-inner {
+      background: var(--dp-main) !important;
+    }
+  }
+}
