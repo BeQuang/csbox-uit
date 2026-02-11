@@ -95,6 +95,14 @@ export default function AdminLayout({ children }: Props) {
       <RouteProgress />
 
       <Sider width={220} className="app-layout__sider">
+        <button
+          type="button"
+          className="app-layout__brand"
+          onClick={() => navigate("/")}
+        >
+          <img src="/image/logo/logo_bequang.png" alt="CS Box logo" />
+          <span>CS Box UIT</span>
+        </button>
         <Menu
           theme="dark"
           mode="inline"

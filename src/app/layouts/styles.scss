@@ -38,6 +38,31 @@
     }
   }
 
+  &__brand {
+    border: 0;
+    width: 100%;
+    padding: 16px;
+    background: var(--color-sidebar-bg);
+    color: #fff;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 15px;
+    font-weight: 700;
+    cursor: pointer;
+    border-bottom: 1px solid var(--color-sidebar-border);
+
+    img {
+      width: 34px;
+      height: 34px;
+      border-radius: 10px;
+      object-fit: cover;
+      border: 1px solid rgb(255 255 255 / 24%);
+      background: #fff;
+      padding: 2px;
+    }
+  }
+
   &__menu {
     flex: 1;
     border-right: none;
@@ -81,7 +106,6 @@
   &__content {
     flex: 1;
     overflow-y: auto;
-    padding: 24px;
     background: var(--color-bg-app); /* Nền xám nhạt */
     position: relative;
     scroll-behavior: smooth;
@@ -102,12 +126,27 @@
   box-shadow: var(--shadow-md); /* Bóng đổ đậm hơn topbar admin một chút */
 
   &__logo {
-    color: var(--color-navbar-text); /* Thường là --color-text */
-    font-size: 18px;
+    border: 0;
+    background: transparent;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: var(--color-navbar-title-text);
+    font-size: 17px;
     font-weight: 700;
     margin-right: 32px;
     white-space: nowrap;
     cursor: pointer;
+
+    img {
+      width: 36px;
+      height: 36px;
+      object-fit: cover;
+      border-radius: 10px;
+      border: 1px solid rgb(37 99 235 / 28%);
+      background: #fff;
+      padding: 2px;
+    }
   }
 
   &__menu {
@@ -128,7 +167,7 @@
       /* Active/Hover state */
       &:hover,
       &.ant-menu-item-selected {
-        color: var(--color-primary) !important;
+        color: #fff !important;
       }
 
       &:hover::after,

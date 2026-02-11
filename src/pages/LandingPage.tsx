@@ -1,14 +1,14 @@
 import { RootState } from "@/app/redux/store";
 import { useAuthStore } from "@/app/store/auth.store";
 import CSButton from "@/components/core/CSButton";
+import { useToast } from "@/components/core/CSToast";
 import { usePageTitle } from "@/hooks/userPageTitle";
 import { redirectByRole } from "@/utils/redirectByRole";
 import { ROLES } from "@/utils/role";
-import { Button, Col, Row, Space, Tag, Typography } from "antd";
+import { Button, Col, Row, Space, Typography } from "antd";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import "./stylesLanding.scss";
-import { useToast } from "@/components/core/CSToast";
 
 const { Title, Paragraph } = Typography;
 
@@ -57,6 +57,27 @@ const roleCards = [
   },
 ];
 
+const customComponents = [
+  {
+    name: "CSButton",
+    desc: "Nút hành động đồng bộ style hệ thống, dễ tuỳ biến kích thước và trạng thái.",
+    image:
+      "https://images.unsplash.com/photo-1551650975-87deedd944c3?auto=format&fit=crop&w=1200&q=80",
+  },
+  {
+    name: "CSInput & CSSelect",
+    desc: "Bộ nhập liệu chuẩn giúp form rõ ràng, dễ đọc và thao tác nhanh cho người dùng.",
+    image:
+      "https://images.unsplash.com/photo-1461749280684-dccba630e2f6?auto=format&fit=crop&w=1200&q=80",
+  },
+  {
+    name: "CSTable & CSModal",
+    desc: "Hiển thị dữ liệu dạng bảng kèm modal thao tác tạo/sửa để tăng hiệu quả quản trị.",
+    image:
+      "https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=1200&q=80",
+  },
+];
+
 export default function LandingPage() {
   const { toast } = useToast();
   const navigate = useNavigate();
@@ -77,9 +98,14 @@ export default function LandingPage() {
     <div className="landing">
       <section className="landing__hero">
         <div className="landing__hero-content">
-          <Tag color="blue" className="landing__tag">
-            Figma-style introduction
-          </Tag>
+          <button
+            type="button"
+            className="landing__brand"
+            onClick={() => navigate("/")}
+          >
+            <img src="/image/logo/logo_bequang.png" alt="CS Box logo" />
+            <span>CS Box UIT</span>
+          </button>
           <Title className="landing__title" level={1}>
             Landing page dài hơn, đẹp hơn và rõ luồng truy cập theo vai trò
           </Title>
@@ -137,6 +163,29 @@ export default function LandingPage() {
                 <div className="landing__feature-content">
                   <h3>{item.title}</h3>
                   <p>{item.description}</p>
+                </div>
+              </article>
+            </Col>
+          ))}
+        </Row>
+      </section>
+
+      <section className="landing__components">
+        <Title level={3}>Khám phá nhanh các CS custom components</Title>
+        <Paragraph>
+          Bộ component nội bộ được xây dựng theo hướng dễ dùng, dễ mở rộng và
+          giữ UI thống nhất. Chỉ cần nhìn qua là bạn có thể hình dung cách áp
+          dụng vào các màn hình thực tế.
+        </Paragraph>
+
+        <Row gutter={[20, 20]}>
+          {customComponents.map((component) => (
+            <Col xs={24} md={8} key={component.name}>
+              <article className="landing__component-card">
+                <img src={component.image} alt={component.name} />
+                <div className="landing__feature-content">
+                  <h3>{component.name}</h3>
+                  <p>{component.desc}</p>
                 </div>
               </article>
             </Col>

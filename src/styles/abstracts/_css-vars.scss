@@ -79,7 +79,8 @@
 
   /* Topbar & Navbar: Nền trắng, chữ gray-900 */
   --color-navbar-bg: #ffffff;
-  --color-navbar-text: #{v.$gray-900};
+  --color-navbar-text: #{v.$primary-100};
+  --color-navbar-title-text: #{v.$gray-900};
   --color-topbar-border: #{v.$gray-200};
 
   /* Custom Scrollbar Global */

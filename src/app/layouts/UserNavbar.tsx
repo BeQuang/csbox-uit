@@ -76,13 +76,14 @@ export default function UserNavbar() {
   return (
     <Layout.Header className="user-navbar">
       {/* Logo */}
-      <div
+      <button
+        type="button"
         className="user-navbar__logo"
         onClick={() => navigate("/")}
-        style={{ cursor: "pointer" }}
       >
-        My App
-      </div>
+        <img src="/image/logo/logo_bequang.png" alt="CS Box logo" />
+        <span>CS Box UIT</span>
+      </button>
 
       {/* Menu */}
       <Menu

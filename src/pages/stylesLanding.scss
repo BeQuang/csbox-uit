@@ -6,6 +6,7 @@
   display: flex;
   flex-direction: column;
   gap: 28px;
+  border-radius: var(--radius-md);
   background:
     radial-gradient(
       circle at top right,
@@ -21,6 +22,7 @@
 
   &__hero,
   &__grid-section,
+  &__components,
   &__timeline,
   &__roles {
     border-radius: 24px;
@@ -28,6 +30,30 @@
     background: rgb(255 255 255 / 90%);
     box-shadow: var(--shadow-lg);
     backdrop-filter: blur(6px);
+  }
+
+  &__brand {
+    border: 0;
+    background: rgb(37 99 235 / 12%);
+    color: #1d4ed8;
+    border-radius: 999px;
+    padding: 8px 14px;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 12px;
+    font-weight: 700;
+    cursor: pointer;
+
+    img {
+      width: 28px;
+      height: 28px;
+      object-fit: cover;
+      border-radius: 8px;
+      background: #fff;
+      padding: 2px;
+      border: 1px solid rgb(37 99 235 / 22%);
+    }
   }
 
   &__hero {
@@ -91,6 +117,10 @@
       transform: translateY(-4px);
       box-shadow: var(--shadow-hover-primary);
     }
+  }
+
+  &__component-card {
+    @extend .landing__feature-card;
   }
 
   &__feature-content {
