@@ -10,12 +10,14 @@ import { Button, Layout, Menu, MenuProps } from "antd";
 import { useSelector } from "react-redux";
 import { useLocation, useNavigate } from "react-router-dom";
 import "./styles.scss";
+import { useToast } from "@/components/core/CSToast";
 
 const { Sider, Content } = Layout;
 
 type MenuItem = Required<MenuProps>["items"][number];
 
 export default function AdminLayout({ children }: Props) {
+  const { toast } = useToast();
   const navigate = useNavigate();
   const location = useLocation();
   const { user } = useSelector((state: RootState) => state.auth);
@@ -81,6 +83,7 @@ export default function AdminLayout({ children }: Props) {
   const handleLogout = () => {
     logout();
     navigate("/", { replace: true });
+    toast("Đăng xuất thành công", "success");
   };
 
   return (

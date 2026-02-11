@@ -42,7 +42,7 @@ export default function AppBreadcrumb() {
   const finalItems = [
     {
       key: "/",
-      title: <Link to="/dashboard">Trang chủ</Link>,
+      title: <Link to="/">Trang chủ</Link>,
     },
     ...breadcrumbItems,
   ];

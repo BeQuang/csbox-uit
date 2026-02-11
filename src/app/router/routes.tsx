@@ -2,6 +2,7 @@
 import DashboardPage from "@/modules/dashboard/DashboardPage";
 import LandingPage from "@/pages/LandingPage";
 import LoginPage from "@/pages/LoginPage";
+import RegisterPage from "@/pages/RegisterPage";
 import UnauthorizedPage from "@/pages/UnauthorizedPage";
 import type { Role } from "@/utils/role";
 import { ROLES } from "@/utils/role";
@@ -23,6 +24,7 @@ export interface AppRoute {
 export const routes: AppRoute[] = [
   { path: "/", element: <LandingPage /> },
   { path: "/login", element: <LoginPage /> },
+  { path: "/register", element: <RegisterPage /> },
   { path: "/unauthorized", element: <UnauthorizedPage /> },
   {
     path: "/dashboard",
