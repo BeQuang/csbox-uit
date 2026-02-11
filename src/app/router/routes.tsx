@@ -10,6 +10,7 @@ import { profileRoutes } from "./configs/profile.routes";
 import { studyRoutes } from "./configs/study.routes";
 import { userRoutes } from "./configs/user.routes";
 import NotFoundPage from "@/pages/NotFoundPage";
+import { coreGuideRoutes } from "@/app/router/configs/core-guide.routes";
 
 export interface AppRoute {
   path: string;
@@ -37,6 +38,7 @@ export const routes: AppRoute[] = [
   userRoutes,
   studyRoutes,
   profileRoutes,
+  coreGuideRoutes,
   {
     path: "*",
     element: <NotFoundPage />,
