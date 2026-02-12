@@ -1,61 +1,58 @@
 import type { AppRoute } from "@/app/router/routes";
+import PreviewCSButton from "@/modules/admin-guide/item-preview/PreviewCSButton";
+import PreviewCSDatePicker from "@/modules/admin-guide/item-preview/PreviewCSDatePicker";
+import PreviewCSInput from "@/modules/admin-guide/item-preview/PreviewCSInput";
+import PreviewCSModal from "@/modules/admin-guide/item-preview/PreviewCSModal";
+import PreviewCSSelect from "@/modules/admin-guide/item-preview/PreviewCSSelect";
+import PreviewCSTable from "@/modules/admin-guide/item-preview/PreviewCSTable";
+import PreviewCSToast from "@/modules/admin-guide/item-preview/PreviewCSToast";
 import { ROLES } from "@/utils/role";
-import {
-  CSButtonGuidePage,
-  CSDatePickerGuidePage,
-  CSInputGuidePage,
-  CSModalGuidePage,
-  CSSelectGuidePage,
-  CSTableGuidePage,
-  CSToastGuidePage,
-} from "../../../modules/admin-guide/core-guide.pages";
 
 export const coreGuideRoutes: AppRoute = {
   path: "/admin-guide",
   isProtected: true,
   allowedRoles: [ROLES.ADMIN],
   menuLabel: "Hướng dẫn sử dụng",
-  element: <CSButtonGuidePage />,
   children: [
     {
       path: "/admin-guide/CSButton",
-      element: <CSButtonGuidePage />,
+      element: <PreviewCSButton />,
       menuLabel: "CSButton",
       allowedRoles: [ROLES.ADMIN],
     },
     {
       path: "/admin-guide/CSTable",
-      element: <CSTableGuidePage />,
+      element: <PreviewCSTable />,
       menuLabel: "CSTable",
       allowedRoles: [ROLES.ADMIN],
     },
     {
       path: "/admin-guide/CSInput",
-      element: <CSInputGuidePage />,
+      element: <PreviewCSInput />,
       menuLabel: "CSInput",
       allowedRoles: [ROLES.ADMIN],
     },
     {
       path: "/admin-guide/CSSelect",
-      element: <CSSelectGuidePage />,
+      element: <PreviewCSSelect />,
       menuLabel: "CSSelect",
       allowedRoles: [ROLES.ADMIN],
     },
     {
       path: "/admin-guide/CSModal",
-      element: <CSModalGuidePage />,
+      element: <PreviewCSModal />,
       menuLabel: "CSModal",
       allowedRoles: [ROLES.ADMIN],
     },
     {
       path: "/admin-guide/CSDatePicker",
-      element: <CSDatePickerGuidePage />,
+      element: <PreviewCSDatePicker />,
       menuLabel: "CSDatePicker",
       allowedRoles: [ROLES.ADMIN],
     },
     {
       path: "/admin-guide/CSToast",
-      element: <CSToastGuidePage />,
+      element: <PreviewCSToast />,
       menuLabel: "CSToast",
       allowedRoles: [ROLES.ADMIN],
     },
