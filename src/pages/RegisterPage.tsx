@@ -4,6 +4,11 @@ import { useToast } from "@/components/core/CSToast";
 import { usePageTitle } from "@/hooks/userPageTitle";
 import { redirectByRole } from "@/utils/redirectByRole";
 import { ROLES, Role } from "@/utils/role";
+import {
+  hasMinLength,
+  hasStrongPasswordPattern,
+  isValidRole,
+} from "@/utils/validation";
 import { Card, Form, Input, Select, Typography } from "antd";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
@@ -63,7 +68,19 @@ export default function RegisterPage() {
         <Form.Item
           label="Tên đăng nhập"
           name="username"
-          rules={[{ required: true, message: "Vui lòng nhập tên đăng nhập" }]}
+          rules={[
+            { required: true, message: "Vui lòng nhập tên đăng nhập" },
+            {
+              validator(_, value) {
+                if (!value || hasMinLength(value, 3)) {
+                  return Promise.resolve();
+                }
+                return Promise.reject(
+                  new Error("Tên đăng nhập tối thiểu 3 ký tự"),
+                );
+              },
+            },
+          ]}
         >
           <Input placeholder="Ví dụ: minhnguyen" />
         </Form.Item>
@@ -73,10 +90,29 @@ export default function RegisterPage() {
           name="password"
           rules={[
             { required: true, message: "Vui lòng nhập mật khẩu" },
-            { min: 6, message: "Mật khẩu tối thiểu 6 ký tự" },
+            {
+              validator(_, value) {
+                if (!value || hasMinLength(value, 8)) {
+                  return Promise.resolve();
+                }
+                return Promise.reject(new Error("Mật khẩu tối thiểu 8 ký tự"));
+              },
+            },
+            {
+              validator(_, value) {
+                if (!value || hasStrongPasswordPattern(value)) {
+                  return Promise.resolve();
+                }
+                return Promise.reject(
+                  new Error(
+                    "Mật khẩu cần có chữ hoa, chữ thường, số và ký tự đặc biệt",
+                  ),
+                );
+              },
+            },
           ]}
         >
-          <Input.Password placeholder="Tối thiểu 6 ký tự" />
+          <Input.Password placeholder="Tối thiểu 8 ký tự, gồm hoa/thường/số/ký tự đặc biệt" />
         </Form.Item>
 
         <Form.Item
@@ -103,7 +139,17 @@ export default function RegisterPage() {
         <Form.Item
           label="Vai trò"
           name="role"
-          rules={[{ required: true, message: "Vui lòng chọn vai trò" }]}
+          rules={[
+            { required: true, message: "Vui lòng chọn vai trò" },
+            {
+              validator(_, value) {
+                if (!value || isValidRole(value)) {
+                  return Promise.resolve();
+                }
+                return Promise.reject(new Error("Vai trò không hợp lệ"));
+              },
+            },
+          ]}
         >
           <Select
             options={[

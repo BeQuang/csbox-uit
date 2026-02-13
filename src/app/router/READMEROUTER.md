@@ -256,3 +256,47 @@ export default function StudyPage() {
 - Quản lý quyền truy cập rõ ràng
 - Menu tự động active chính xác theo URL
 - Hạn chế bug do route lồng nhau
+
+---
+
+## 🧭 7. Thêm mục con vào "Hướng dẫn sử dụng" (Admin Guide)
+
+Nhóm route `Hướng dẫn sử dụng` đang được cấu hình tại:
+
+- `src/app/router/configs/core-guide.routes.tsx`
+
+Đây là route cha `/admin-guide` và có các route con hiển thị trên menu.
+
+### Ví dụ thêm mục con cho Validation
+
+```tsx
+import PreviewValidation from "@/modules/admin-guide/item-preview/PreviewValidation";
+
+export const coreGuideRoutes: AppRoute = {
+  path: "/admin-guide",
+  isProtected: true,
+  allowedRoles: [ROLES.ADMIN],
+  menuLabel: "Hướng dẫn sử dụng",
+  children: [
+    // ... các mục cũ
+    {
+      path: "/admin-guide/Validation",
+      element: <PreviewValidation />,
+      menuLabel: "Validation",
+      allowedRoles: [ROLES.ADMIN],
+    },
+  ],
+};
+```
+
+### Tạo trang preview cho mục mới
+
+Tạo file:
+
+- `src/modules/admin-guide/item-preview/PreviewValidation.tsx`
+
+Và đọc markdown từ:
+
+- `src/utils/READMEVALIDATION.md?raw`
+
+Khi đó menu Admin sẽ tự có thêm mục con `Validation` trong `Hướng dẫn sử dụng`.

@@ -6,6 +6,8 @@ import PreviewCSModal from "@/modules/admin-guide/item-preview/PreviewCSModal";
 import PreviewCSSelect from "@/modules/admin-guide/item-preview/PreviewCSSelect";
 import PreviewCSTable from "@/modules/admin-guide/item-preview/PreviewCSTable";
 import PreviewCSToast from "@/modules/admin-guide/item-preview/PreviewCSToast";
+import PreviewRouter from "@/modules/admin-guide/item-preview/PreviewRouter";
+import PreviewValidation from "@/modules/admin-guide/item-preview/PreviewValidation";
 import { ROLES } from "@/utils/role";
 
 export const coreGuideRoutes: AppRoute = {
@@ -54,6 +56,18 @@ export const coreGuideRoutes: AppRoute = {
       path: "/admin-guide/CSToast",
       element: <PreviewCSToast />,
       menuLabel: "CSToast",
+      allowedRoles: [ROLES.ADMIN],
+    },
+    {
+      path: "/admin-guide/Validation",
+      element: <PreviewValidation />,
+      menuLabel: "Validation",
+      allowedRoles: [ROLES.ADMIN],
+    },
+    {
+      path: "/admin-guide/Router",
+      element: <PreviewRouter />,
+      menuLabel: "Router",
       allowedRoles: [ROLES.ADMIN],
     },
   ],
